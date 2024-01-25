@@ -1,0 +1,96 @@
+# B48
+
+
+```{r ,include=FALSE}
+library(Rose)
+library(ggplot2)
+library(plotly)
+library(knitr)
+require(tikzDevice)
+df <- data.frame(x = 1:5, y = 1:5)
+f1 <- function(df) {
+  gg <- ggplot(df, aes(x,y)) + geom_point()
+  assign("ggp", plotly::ggplotly(gg), envir=parent.frame())
+  #ggp
+  df    # NOT returning a plot
+}
+res1 <- f1(df)
+ggp   # Let knit handle the plot
+myplotly(ggplot())
+```
+
+```{r, echo=FALSE, results='asis'}
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-add_corr_to_df(string =paste0("M_{PS}"),
+                    all_obs=all_obs,mt=mt,df = NULL,
+                    log=FALSE, number =NULL, nudge=0)
+
+df<-add_corr_to_df(string =paste0("M_{K}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+df<-add_corr_to_df(string =paste0("M_{K1}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+df<-add_corr_to_df(string =paste0("M_{K2}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+gg<- plot_df_corr_ggplot(df,width = 0.01)
+fig<- myplotly(gg,"","t","$M_{PS}$",  to_print=TRUE )
+
+
+```
+
+
+```{r, echo=FALSE, results='asis'}
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_raw_correlators")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-add_corr_to_df(string =paste0("C_{PS}"),
+                    all_obs=all_obs,mt=mt,df = NULL,
+                    log=TRUE, number =(1404+0+1)*2-1, rename = "C_PS", nudge=0)
+
+df<-add_corr_to_df(string =paste0("C_{PS}(e)"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=TRUE, number =(1404+9+1)*2-1, rename = "C_PS(e)", nudge=0)
+df<-add_corr_to_df(string =paste0("C_{PS}(-e)"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=TRUE, number =(1404+11+1)*2-1, rename = "C_PS(-e)", nudge=0)
+
+
+
+gg<- plot_df_corr_ggplot(df,width = 0.01, noribbon = TRUE)
+fig<- myplotly(gg,"","t","$C_{PS}$",  to_print=TRUE )
+
+
+```
+
+```{r, echo=FALSE, results='asis'}
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-add_corr_to_df(string =paste0("Delta_C_{PS}"),
+                    all_obs=all_obs,mt=mt,df = NULL,
+                    log=TRUE, number =NULL, nudge=0)
+
+gg<- plot_df_corr_ggplot(df,width = 0.01)
+fig<- myplotly(gg,"","t","$\\Delta C_{PS}$",  to_print=TRUE )
+
+```
+
+```{r, echo=FALSE, results='asis'}
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-add_corr_to_df(string =paste0("Delta_M_{PS}"),
+                    all_obs=all_obs,mt=mt,df = NULL,
+                    log=FALSE, number =NULL, nudge=0)
+
+gg<- plot_df_corr_ggplot(df,width = 0.01)
+fig<- myplotly(gg,"","t","$\\Delta M_{PS}$",  to_print=TRUE )
+
+
+```
