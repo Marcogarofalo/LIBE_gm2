@@ -45,41 +45,59 @@ fig<- myplotly(gg,"","t","$M_{PS}$",  to_print=TRUE )
 ```
 
 
-```{r, echo=FALSE, results='asis'}
-file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_raw_correlators")
-mt<-read_df(file)
-all_obs<- get_all_corr(mt)
-df<-add_corr_to_df(string =paste0("C_{PS}"),
-                    all_obs=all_obs,mt=mt,df = NULL,
-                    log=TRUE, number =(1404+0+1)*2-1, rename = "C_PS", nudge=0)
+The correction to the pion correlator is 
+$$
+C(t)= C_0(t) + e^2\delta_e C(t)
+$$
 
-df<-add_corr_to_df(string =paste0("C_{PS}(e)"),
-                    all_obs=all_obs,mt=mt,df = df,
-                    log=TRUE, number =(1404+9+1)*2-1, rename = "C_PS(e)", nudge=0)
-df<-add_corr_to_df(string =paste0("C_{PS}(-e)"),
-                    all_obs=all_obs,mt=mt,df = df,
-                    log=TRUE, number =(1404+11+1)*2-1, rename = "C_PS(-e)", nudge=0)
+We define the discrete second derivative $\nabla_e^2f(e)=(f(e)-2f(0)+f(-e))/e^2$.
+due to the different quark charges we need to compute the derivative respect the two
+quark lines separately
+$$
+\delta_e C = \frac{1}{2}[e_u^2 \nabla^2_{e1} C + e_d^2 \nabla^2_{e2} C 
+  + e_u e_d(\nabla^2_{e} C - \nabla^2_{e1} C  -\nabla^2_{e2} C) ]
+$$
+with $\nabla_{e1}$ is the derivative respect only one leg.
+To compute the correction respect to the effective mass $M(e)=M_0+\delta M$ we use the formula
+$$
+\delta M(t)= \frac{\delta C(t+1)}{C_0(t)} -\frac{\delta C(t)}{C_0(t) } \frac{1}{[(T/2-t-1) \tanh(M_0(T/2-t-1))-(T/2-t) \tanh(M_0(T/2-t)) ]}
+$$
+
+<!-- ```{r, echo=FALSE, results='asis'} -->
+<!-- file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_raw_correlators") -->
+<!-- mt<-read_df(file) -->
+<!-- all_obs<- get_all_corr(mt) -->
+<!-- df<-add_corr_to_df(string =paste0("C_{PS}"), -->
+<!--                     all_obs=all_obs,mt=mt,df = NULL, -->
+<!--                     log=TRUE, number =(1404+0+1)*2-1, rename = "C_PS", nudge=0) -->
+
+<!-- df<-add_corr_to_df(string =paste0("C_{PS}(e)"), -->
+<!--                     all_obs=all_obs,mt=mt,df = df, -->
+<!--                     log=TRUE, number =(1404+9+1)*2-1, rename = "C_PS(e)", nudge=0) -->
+<!-- df<-add_corr_to_df(string =paste0("C_{PS}(-e)"), -->
+<!--                     all_obs=all_obs,mt=mt,df = df, -->
+<!--                     log=TRUE, number =(1404+11+1)*2-1, rename = "C_PS(-e)", nudge=0) -->
 
 
 
-gg<- plot_df_corr_ggplot(df,width = 0.01, noribbon = TRUE)
-fig<- myplotly(gg,"","t","$C_{PS}$",  to_print=TRUE )
+<!-- gg<- plot_df_corr_ggplot(df,width = 0.01, noribbon = TRUE) -->
+<!-- fig<- myplotly(gg,"","t","$C_{PS}$",  to_print=TRUE ) -->
 
 
-```
+<!-- ``` -->
 
-```{r, echo=FALSE, results='asis'}
-file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
-mt<-read_df(file)
-all_obs<- get_all_corr(mt)
-df<-add_corr_to_df(string =paste0("Delta_C_{PS}"),
-                    all_obs=all_obs,mt=mt,df = NULL,
-                    log=TRUE, number =NULL, nudge=0)
+<!-- ```{r, echo=FALSE, results='asis'} -->
+<!-- file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output") -->
+<!-- mt<-read_df(file) -->
+<!-- all_obs<- get_all_corr(mt) -->
+<!-- df<-add_corr_to_df(string =paste0("Delta_C_{PS}"), -->
+<!--                     all_obs=all_obs,mt=mt,df = NULL, -->
+<!--                     log=TRUE, number =NULL, nudge=0) -->
 
-gg<- plot_df_corr_ggplot(df,width = 0.01)
-fig<- myplotly(gg,"","t","$\\Delta C_{PS}$",  to_print=TRUE )
+<!-- gg<- plot_df_corr_ggplot(df,width = 0.01) -->
+<!-- fig<- myplotly(gg,"","t","$\\Delta_e C_{PS}$",  to_print=TRUE ) -->
 
-```
+<!-- ``` -->
 
 ```{r, echo=FALSE, results='asis'}
 file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
@@ -90,7 +108,7 @@ df<-add_corr_to_df(string =paste0("Delta_M_{PS}"),
                     log=FALSE, number =NULL, nudge=0)
 
 gg<- plot_df_corr_ggplot(df,width = 0.01)
-fig<- myplotly(gg,"","t","$\\Delta M_{PS}$",  to_print=TRUE )
+fig<- myplotly(gg,"","t","$\\Delta_e M_{PS}$",  to_print=TRUE )
 
 
 ```

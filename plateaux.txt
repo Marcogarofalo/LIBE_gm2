@@ -1,0 +1,5 @@
+LIBE_B48.dat  M_{PS}        16 42 1
+LIBE_B48.dat  M_{K}         16  18 1
+LIBE_B48.dat  M_{K1}        16  18 1
+LIBE_B48.dat  M_{K2}        16  18 1
+LIBE_B48.dat  Delta_M_{PS}  30  40 1
