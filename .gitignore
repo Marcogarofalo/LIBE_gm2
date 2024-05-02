@@ -88,5 +88,10 @@ Meson_masses_clover/my-plotly-plot.html
 
 gprof_build/*
 !gprof_build/do_cmake.sh
+sanitize_build/*
+!sanitize_build/do_cmake.sh
+!sanitize_build/make_both.sh
+!gprof_build/do_cmake.sh
+
 Meson_masses_clover/cD211.054.96_dGamma_files/libs/jquery-3.5.1/jquery-AUTHORS.txt
 cov_bin.txt
