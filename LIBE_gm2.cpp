@@ -13,7 +13,7 @@
 #include "global.hpp"
 #include "read.hpp"
 #include "resampling_new.hpp"
-
+#include "tower.hpp"
 #include "linear_fit.hpp"
 #include "mutils.hpp"
 #include "various_fits.hpp"
@@ -95,8 +95,8 @@ void read_twopt(FILE* stream, double*** to_write, generic_header head) {
 }
 
 int id_twpt(generic_header head, int im, int im1, int TMOS, int ig, int id_counter) {
-    
-    return id_counter + (head.oranges.size() + 1) * (ig
+
+    return id_counter + (head.oranges.size()) * (ig
         + head.gammas.size() * (TMOS + head.rs.size() * (im1 + 2 * (im))));
 }
 
@@ -117,7 +117,7 @@ int main(int argc, char** argv) {
 
     //////////////////////////////////// read and setup header
     generic_header head; //= read_head(infile);
-    head.read_header(infile);
+    head.read_header_debug(infile);
     head.print_header();
     init_global_head(head);
 
@@ -244,48 +244,50 @@ int main(int argc, char** argv) {
     ////////////////////////////////////////////////////////////
     int idTM = 0;
     int idOS = 1;
-    int same_mass = 0;
-    int diff_mass = 1;
+    int same_mass = 1;
+    int diff_mass = 0;
     std::map<std::string, int> gamma_map{
         {"P5P5", 0},
-        {"A1A1", 1},
-        {"A2A2", 2},
-        {"A3A3", 3},
-        {"A4A4", 4},
-        {"V1V1", 5},
-        {"V2V2", 6},
-        {"V3V3", 7},
-        {"V4V4", 8}
+        {"S0S0", 1},
+        {"A1A1", 2},
+        {"A2A2", 3},
+        {"A3A3", 4},
+        {"A4A4", 5},
+        {"V1V1", 6},
+        {"V2V2", 7},
+        {"V3V3", 8},
+        {"V4V4", 9}
     };
     std::map<std::string, int> counterterm_map{
-        {"no", 0},
-        {"dmu1", 1},
-        {"dmu2", 2},
-        {"-dmu1", 3},
-        {"-dmu2", 4},
-        {"dk", 5},
-        {"dk1", 6},
-        {"-dk", 7},
-        {"-dk1", 8},
-        {"de", 9},
-        {"de1", 10},
-        {"-de", 11},
-        {"-de1",12}
+        {"-e-e", 0},
+        {"0-e", 1},
+        {"e-e", 2},
+        {"-e0", 3},
+        {"00", 4},
+        {"e0", 5},
+        {"-ee", 6},
+        {"0e", 7},
+        {"ee", 8},
+        {"00_sib", 9},
+        {"10_sib", 10},
+        {"01_sib", 11},
+        {"20_sib", 12},
+        {"02_sib", 13},
     };
 
-    int id_PS = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
-    symmetrise_jackboot(Njack, id_PS, head.T, conf_jack);
+    int id_PS = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["00"]);
+    // symmetrise_jackboot(Njack, id_PS, head.T, conf_jack);
 
-    int id_K = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
-    symmetrise_jackboot(Njack, id_K, head.T, conf_jack);
+    int id_K = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], counterterm_map["00"]);
+    // symmetrise_jackboot(Njack, id_K, head.T, conf_jack);
 
-    int id_K1 = id_twpt(head, head.mus.size() - 2, diff_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
-    symmetrise_jackboot(Njack, id_K1, head.T, conf_jack);
+    int id_K1 = id_twpt(head, head.mus.size() - 2, diff_mass, idTM, gamma_map["P5P5"], counterterm_map["00"]);
+    // symmetrise_jackboot(Njack, id_K1, head.T, conf_jack);
 
-    int id_K2 = id_twpt(head, head.mus.size() - 3, diff_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
-    symmetrise_jackboot(Njack, id_K2, head.T, conf_jack);
+    int id_K2 = id_twpt(head, head.mus.size() - 3, diff_mass, idTM, gamma_map["P5P5"], counterterm_map["00"]);
+    // symmetrise_jackboot(Njack, id_K2, head.T, conf_jack);
 
-    for (int i = 0;i < counterterm_map.size();i++) {
+    for (int i = 0;i < head.oranges.size();i++) {
         int j = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], i);
         symmetrise_jackboot(Njack, j, head.T, conf_jack);
         j = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], i);
@@ -337,14 +339,19 @@ int main(int argc, char** argv) {
         fit_info.T = head.T;
         // fit_info.myen = { TDs, TJW ,mu, nu };
         fit_info.n_ext_P = 0;
-        int id_pi_e = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["de"]);
-        int id_pi_e0 = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
-        int id_pi_me = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["-de"]);
-        // fit_info.ext_P = (double**)malloc(sizeof(double*) * fit_info.n_ext_P);
-        // fit_info.ext_P[0] = M_Ds;
-        // fit_info.ext_P[1] = ZA_jack;
-        // fit_info.ext_P[2] = ZV_jack;
-        fit_info.corr_id = { id_pi_e, id_pi_e0, id_pi_me };
+        // int id_pi_e = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["de"]);
+        // int id_pi_e0 = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
+        // int id_pi_me = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["-de"]);
+        // int id_pi_e = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["de"]);
+        // int id_pi_e0 = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
+        // int id_pi_me = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["-de"]);
+        std::vector<int> id_pi(head.oranges.size());
+        for (int i = 0; i < head.oranges.size(); i++) {
+            id_pi[i] = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], i);
+        }
+
+        fit_info.corr_id = id_pi;
+        fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };
         add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
         id_de_pi = ncorr_new - 1;
         struct fit_type tmp_info;
@@ -382,6 +389,44 @@ int main(int argc, char** argv) {
         check_correlatro_counter(5);
         // free_fit_result(fit_info, fit_out);
         fit_info.restore_default();
+        fit_me_P5P5.clear();
+    }
+
+    {   ////////////////////////////////////////////////////////////
+        //  mass correction
+        ////////////////////////////////////////////////////////////
+        struct fit_type fit_info;
+        fit_info.N = 1;
+        fit_info.Njack = Njack;
+
+        fit_info.T = head.T;
+        // fit_info.myen = { TDs, TJW ,mu, nu };
+        fit_info.n_ext_P = 0;
+        // int id_pi_e = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["de"]);
+        // int id_pi_e0 = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
+        // int id_pi_me = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["-de"]);
+        // int id_pi_e = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["de"]);
+        // int id_pi_e0 = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
+        // int id_pi_me = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["-de"]);
+        std::vector<int> id_pi(head.oranges.size());
+        for (int i = 0; i < head.oranges.size(); i++) {
+            id_pi[i] = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], i);
+        }
+
+        fit_info.corr_id = id_pi;
+        fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };
+        add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
+        id_de_pi = ncorr_new - 1;
+        struct fit_type tmp_info;
+        tmp_info.codeplateaux = true;
+        tmp_info.tmin = 2;
+        tmp_info.tmax = 2;
+        double* tmp = plateau_correlator_function(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, Njack,
+            namefile_plateaux, outfile, id_de_pi, "Delta_C_{PS}", identity, jack_file, tmp_info);
+        free(tmp);
+        check_correlatro_counter(4);
+        fit_info.restore_default();
     }
 
     // free stuff
@@ -389,4 +434,6 @@ int main(int argc, char** argv) {
     free(M_K);
     free(M_K1);
     free(M_K2);
+    for (int i = 0; i < 7; i++) free(option[i]);
+    free(option);
 }
