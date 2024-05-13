@@ -60,55 +60,178 @@ $$
 with $\nabla_{e1}$ is the derivative respect only one leg.
 To compute the correction respect to the effective mass $M(e)=M_0+\delta M$ we use the formula
 $$
-\delta M(t)= \frac{\delta C(t+1)}{C_0(t)} -\frac{\delta C(t)}{C_0(t) } \frac{1}{[(T/2-t-1) \tanh(M_0(T/2-t-1))-(T/2-t) \tanh(M_0(T/2-t)) ]}
-$$
+\delta M(t)=\left( \frac{\delta C(t+1)}{C_0(t)} -\frac{\delta C(t)}{C_0(t) } \right)\frac{1}{[(T/2-t-1) \tanh(M_0(T/2-t-1))-(T/2-t) \tanh(M_0(T/2-t)) ]}
+$$ {#eq-dm}
 
-<!-- ```{r, echo=FALSE, results='asis'} -->
-<!-- file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_raw_correlators") -->
-<!-- mt<-read_df(file) -->
-<!-- all_obs<- get_all_corr(mt) -->
-<!-- df<-add_corr_to_df(string =paste0("C_{PS}"), -->
-<!--                     all_obs=all_obs,mt=mt,df = NULL, -->
-<!--                     log=TRUE, number =(1404+0+1)*2-1, rename = "C_PS", nudge=0) -->
-
-<!-- df<-add_corr_to_df(string =paste0("C_{PS}(e)"), -->
-<!--                     all_obs=all_obs,mt=mt,df = df, -->
-<!--                     log=TRUE, number =(1404+9+1)*2-1, rename = "C_PS(e)", nudge=0) -->
-<!-- df<-add_corr_to_df(string =paste0("C_{PS}(-e)"), -->
-<!--                     all_obs=all_obs,mt=mt,df = df, -->
-<!--                     log=TRUE, number =(1404+11+1)*2-1, rename = "C_PS(-e)", nudge=0) -->
-
-
-
-<!-- gg<- plot_df_corr_ggplot(df,width = 0.01, noribbon = TRUE) -->
-<!-- fig<- myplotly(gg,"","t","$C_{PS}$",  to_print=TRUE ) -->
-
-
-<!-- ``` -->
-
-<!-- ```{r, echo=FALSE, results='asis'} -->
-<!-- file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output") -->
-<!-- mt<-read_df(file) -->
-<!-- all_obs<- get_all_corr(mt) -->
-<!-- df<-add_corr_to_df(string =paste0("Delta_C_{PS}"), -->
-<!--                     all_obs=all_obs,mt=mt,df = NULL, -->
-<!--                     log=TRUE, number =NULL, nudge=0) -->
-
-<!-- gg<- plot_df_corr_ggplot(df,width = 0.01) -->
-<!-- fig<- myplotly(gg,"","t","$\\Delta_e C_{PS}$",  to_print=TRUE ) -->
-
-<!-- ``` -->
 
 ```{r, echo=FALSE, results='asis'}
 file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
 mt<-read_df(file)
 all_obs<- get_all_corr(mt)
-df<-add_corr_to_df(string =paste0("Delta_M_{PS}"),
+df<-add_corr_to_df(string =paste0("Delta_e_M_{PS}"),
                     all_obs=all_obs,mt=mt,df = NULL,
                     log=FALSE, number =NULL, nudge=0)
 
 gg<- plot_df_corr_ggplot(df,width = 0.01)
 fig<- myplotly(gg,"","t","$\\Delta_e M_{PS}$",  to_print=TRUE )
+
+
+```
+
+## exchange only
+
+Below we compute only 
+$$
+\delta_{exc} C\frac{1}{2}e_u e_d(\nabla^2_{e} C - \nabla^2_{e1} C  -\nabla^2_{e2} C)
+$$
+and we plot $\delta_{exc} C/C$
+
+```{r, echo=FALSE, results='asis'}
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-add_corr_to_df(string =paste0("Delta_e_exc_fit_M_{PS}"),
+                    all_obs=all_obs,mt=mt,df = NULL,
+                    log=FALSE, number =NULL, nudge=0)
+
+
+gg<- plot_df_corr_ggplot(df,width = 0.01)
+fig<- myplotly(gg,"","t","$\\delta_{exc} C(t)/C_0(t)$",  to_print=TRUE )
+
+```
+
+using formula (@eq-dm) using $M_0(t)$ and $M_0$ from the plateau fit we get 
+
+
+```{r, echo=FALSE, results='asis'}
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-add_corr_to_df(string =paste0("Delta_e_exc_M_{PS}"),
+                    all_obs=all_obs,mt=mt,df = NULL,
+                    log=FALSE, number =NULL, nudge=0)
+df<-add_corr_to_df(string =paste0("Delta_e_exc_mefft_M_{PS}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+
+gg<- plot_df_corr_ggplot(df,width = 0.01)
+fig<- myplotly(gg,"","t","$\\Delta_\\mu M_{PS}$",  to_print=TRUE )
+
+```
+
+## mass
+
+The correction to the pion correlator due to a change of mass $\mu_u= \mu_{iso}+\delta \mu_u$ and $\mu_d=\mu_{iso}+\delta \mu_d$
+$$
+C(t)= C_0(t) + \delta\mu_u\delta_{\mu_u} C(t) +\delta\mu_d\delta_{\mu_d} C(t)
+$$
+since $\delta_{\mu_u} C = \delta_{\mu_d} C \equiv\delta_{\mu} C$ we car rewrite
+$$
+C(t)= C_0(t) + 2(\mu_{ud} -\mu_{iso}  )   \delta_{\mu} C(t) 
+$$
+where $\delta_\mu C$ is computed with the insertions 
+
+```{r, echo=FALSE, results='asis'}
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-add_corr_to_df(string =paste0("Delta_mu_u_M_{PS}"),
+                    all_obs=all_obs,mt=mt,df = NULL,
+                    log=FALSE, number =NULL, nudge=0)
+
+df<-add_corr_to_df(string =paste0("Delta_mu_d_M_{PS}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+gg<- plot_df_corr_ggplot(df,width = 0.01)
+fig<- myplotly(gg,"","t","$\\Delta_\\mu M_{PS}$",  to_print=TRUE )
+
+
+```
+
+## critical mass
+
+The correction to the pion correlator due to a change of critical mass $m_0$
+$$
+C(t)= C_0(t) + \delta m_0^u\delta_{m_0} C(t)+\delta m_0^d\delta_{m_0} C(t)
+$$
+where $\delta_{m_0} C$ is computed with the insertions 
+
+
+```{r, echo=FALSE, results='asis'}
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-add_corr_to_df(string =paste0("Delta_m0_u_M_{PS}"),
+                    all_obs=all_obs,mt=mt,df = NULL,
+                    log=FALSE, number =NULL, nudge=0)
+df<-add_corr_to_df(string =paste0("Delta_m0_d_M_{PS}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+gg<- plot_df_corr_ggplot(df,width = 0.01)
+fig<- myplotly(gg,"","t","$\\Delta_{m_0} M_{PS}$",  to_print=TRUE )
+
+
+```
+
+## critical mass determination
+
+We consider the correlator VP:
+
+$$
+ C^{VP}=\langle \, \left( \bar u_+ \gamma_0 d_-  \right) (x) \, \left( -i \bar u_+ \gamma_5 d_-  \right) (0) \, \rangle
+$$
+expanding in the counterterms, after noticing that it does not depend on $\mu$, we get
+$$
+C^{VP} =C^{VP}_0 + e^2 \delta_e C^{VP}+2(m_0^{ud}-m_0^{iso})\delta_{m0}C^{VP}\,.
+$$
+From the requirement $C^{VP}=0$  we compute 
+$$
+m_0^{ud}-m_0^{iso} =  e^2 \frac{\delta_e C^{VP}}{2\delta_{m0}C^{VP}}
+$$
+
+
+```{r, echo=FALSE, results='asis'}
+
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-NULL
+# df<-add_corr_to_df(string =paste0("VP"),
+#                     all_obs=all_obs,mt=mt,df = NULL,
+#                     log=FALSE, number =NULL, nudge=0)
+df<-add_corr_to_df(string =paste0("VP_im"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+df<-add_corr_to_df(string =paste0("Delta_e_VP"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+df<-add_corr_to_df(string =paste0("Delta_m0u_VP"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+df<-add_corr_to_df(string =paste0("Delta_m0d_VP"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+# df<-add_corr_to_df(string =paste0("Delta_muu_VP"),
+#                     all_obs=all_obs,mt=mt,df = df,
+#                     log=FALSE, number =NULL, nudge=0)
+
+# df<-add_corr_to_df(string =paste0("Delta_mud_VP"),
+#                     all_obs=all_obs,mt=mt,df = df,
+#                     log=FALSE, number =NULL, nudge=0)
+
+df<-add_corr_to_df(string =paste0("dm0_cr"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0, rename = "$m_0^{ud}-m_0^{iso}$")
+
+gg<- plot_df_corr_ggplot(df,width = 0.01)
+fig<- myplotly(gg,"","t","VP",  to_print=TRUE )
 
 
 ```
