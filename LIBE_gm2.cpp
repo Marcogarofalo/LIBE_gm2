@@ -696,10 +696,6 @@ int main(int argc, char** argv) {
             jack_file);
         check_correlatro_counter(21);
 
-
-
-
-
     }
     // free stuff
     free(M_PS);
