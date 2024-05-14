@@ -181,7 +181,7 @@ fig<- myplotly(gg,"","t","$\\Delta_{m_0} M_{PS}$",  to_print=TRUE )
 We consider the correlator VP:
 
 $$
- C^{VP}=\langle \, \left( \bar u_+ \gamma_0 d_-  \right) (x) \, \left( -i \bar u_+ \gamma_5 d_-  \right) (0) \, \rangle
+ C^{VP}=\langle \, \left( \bar u_+ \gamma_0 d_-  \right) (x) \, \left( i \bar u_+ \gamma_5 d_-  \right) (0) \, \rangle
 $$
 expanding in the counterterms, after noticing that it does not depend on $\mu$, we get
 $$

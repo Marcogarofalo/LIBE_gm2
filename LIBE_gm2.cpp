@@ -318,6 +318,13 @@ int main(int argc, char** argv) {
         symmetrise_jackboot(Njack, j, head.T, conf_jack);
         j = id_twpt(head, head.mus.size() - 3, diff_mass, idTM, gamma_map["P5P5"], i);
         symmetrise_jackboot(Njack, j, head.T, conf_jack);
+
+        j = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["V0P5"], i);
+        symmetrise_jackboot(Njack, j, head.T, conf_jack, -1);
+
+        j = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5V0"], i);
+        symmetrise_jackboot(Njack, j, head.T, conf_jack, -1);
+        
     }
 
     // symmetrise_jackboot(Njack, 1, head.T, conf_jack, -1);
@@ -435,7 +442,7 @@ int main(int argc, char** argv) {
         fit_info.T = head.T;
 
         //////////////////////////////////////////  up
-        fit_info.myen = { -1, 1 };
+        fit_info.myen = { +1, 1 }; // sign , reim
         int id_dmu_u_pi = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 3);
         fit_info.corr_id = { id_dmu_u_pi , id_PS };
 
@@ -448,7 +455,7 @@ int main(int argc, char** argv) {
         // fit_dmu_P5P5.clear();
 
         //////////////////////////////////////////  down
-        fit_info.myen = { 1,  1 };
+        fit_info.myen = { -1,  1 };
         int id_dmu_d_pi = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 4);
         fit_info.corr_id = { id_dmu_d_pi , id_PS };
 
@@ -585,7 +592,7 @@ int main(int argc, char** argv) {
     ///// critical mass mpcac
     ////////////////////////////////////////////////////////////////////////////////
     {
-        int id_VP = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["V0P5"], counterterm_map["00"]);
+        int id_VP = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5V0"], counterterm_map["00"]);
         printf("id VP = %d\n", id_VP);
         struct fit_type tmp_info;
         tmp_info.codeplateaux = true;
@@ -614,7 +621,7 @@ int main(int argc, char** argv) {
         fit_info.n_ext_P = 0;
         std::vector<int> id_pi(head.oranges.size());
         for (int i = 0; i < head.oranges.size(); i++) {
-            id_pi[i] = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["V0P5"], i);
+            id_pi[i] = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5V0"], i);
         }
 
         fit_info.corr_id = id_pi;
@@ -633,14 +640,14 @@ int main(int argc, char** argv) {
         ////////////////////////////////////////////////////////////
         //  critical mass correction
         ////////////////////////////////////////////////////////////
-        int id_VP_m0u = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["V0P5"], head.bananas[0] + 1);
+        int id_VP_m0u = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5V0"], head.bananas[0] + 1);
         tmp = plateau_correlator_function(
             option, kinematic_2pt, (char*)"P5P5", conf_jack, Njack,
             namefile_plateaux, outfile, id_VP_m0u, "Delta_m0u_VP", identity_im, jack_file, tmp_info);
         check_correlatro_counter(16);
         free(tmp);
 
-        int id_VP_m0d = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["V0P5"], head.bananas[0] + 2);
+        int id_VP_m0d = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5V0"], head.bananas[0] + 2);
         tmp = plateau_correlator_function(
             option, kinematic_2pt, (char*)"P5P5", conf_jack, Njack,
             namefile_plateaux, outfile, id_VP_m0d, "Delta_m0d_VP", identity_im, jack_file, tmp_info);
@@ -650,14 +657,14 @@ int main(int argc, char** argv) {
         ////////////////////////////////////////////////////////////
         //  mass correction
         ////////////////////////////////////////////////////////////
-        int id_VP_mu_u = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["V0P5"], head.bananas[0] + 3);
+        int id_VP_mu_u = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5V0"], head.bananas[0] + 3);
         tmp = plateau_correlator_function(
             option, kinematic_2pt, (char*)"P5P5", conf_jack, Njack,
             namefile_plateaux, outfile, id_VP_mu_u, "Delta_muu_VP", identity, jack_file, tmp_info);
         check_correlatro_counter(18);
         free(tmp);
 
-        int id_VP_mu_d = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["V0P5"], head.bananas[0] + 4);
+        int id_VP_mu_d = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5V0"], head.bananas[0] + 4);
         tmp = plateau_correlator_function(
             option, kinematic_2pt, (char*)"P5P5", conf_jack, Njack,
             namefile_plateaux, outfile, id_VP_mu_d, "Delta_mud_VP", identity, jack_file, tmp_info);
@@ -668,7 +675,7 @@ int main(int argc, char** argv) {
         /////// find dm_cr
         fit_info.corr_id = { id_de_VP,  id_VP_m0u, id_VP_m0d };
         fit_info.myen = { 1, 1, 1 }; // re or im
-        fit_info.ave_P = {e_em };
+        fit_info.ave_P = { e_em };
         fit_info.linear_fit = true;
         fit_info.T = head.T;
         fit_info.Nvar = 1;
