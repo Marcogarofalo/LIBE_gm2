@@ -72,6 +72,13 @@ df<-add_corr_to_df(string =paste0("Delta_e_M_{PS}"),
                     all_obs=all_obs,mt=mt,df = NULL,
                     log=FALSE, number =NULL, nudge=0)
 
+df<-add_corr_to_df(string =paste0("Delta_e_M_{Kp}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+df<-add_corr_to_df(string =paste0("Delta_e_M_{K0}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
 gg<- plot_df_corr_ggplot(df,width = 0.01)
 fig<- myplotly(gg,"","t","$\\Delta_e M_{PS}$",  to_print=TRUE )
 
@@ -144,6 +151,15 @@ df<-add_corr_to_df(string =paste0("Delta_mu_d_M_{PS}"),
                     all_obs=all_obs,mt=mt,df = df,
                     log=FALSE, number =NULL, nudge=0)
 
+df<-add_corr_to_df(string =paste0("Delta_mu_u_M_{Kp}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+df<-add_corr_to_df(string =paste0("Delta_mu_u_M_{K0}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
+
 gg<- plot_df_corr_ggplot(df,width = 0.01)
 fig<- myplotly(gg,"","t","$\\Delta_\\mu M_{PS}$",  to_print=TRUE )
 
@@ -169,6 +185,13 @@ df<-add_corr_to_df(string =paste0("Delta_m0_u_M_{PS}"),
 df<-add_corr_to_df(string =paste0("Delta_m0_d_M_{PS}"),
                     all_obs=all_obs,mt=mt,df = df,
                     log=FALSE, number =NULL, nudge=0)
+df<-add_corr_to_df(string =paste0("Delta_m0_u_M_{Kp}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+df<-add_corr_to_df(string =paste0("Delta_m0_u_M_{K0}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0)
+
 
 gg<- plot_df_corr_ggplot(df,width = 0.01)
 fig<- myplotly(gg,"","t","$\\Delta_{m_0} M_{PS}$",  to_print=TRUE )
@@ -234,7 +257,7 @@ df<-add_corr_to_df(string =paste0("dm0_cr_nabla"),
                     all_obs=all_obs,mt=mt,df = df,
                     log=FALSE, number =NULL, nudge=0)
 fit<-get_full_res("dm0_cr_nabla", all_obs,mt)
-cat( fit[1,1]/(4*pi/137.03599)*2/5*9, fit[1,2]/(4*pi/137.03599)*2/5*9)
+# cat( fit[1,1]/(4*pi/137.03599)*2/5*9, fit[1,2]/(4*pi/137.03599)*2/5*9)
 gg<- plot_df_corr_ggplot(df,width = 0.01)
 fig<- myplotly(gg,"","t","VP",  to_print=TRUE )
 

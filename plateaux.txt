@@ -12,3 +12,13 @@ LIBE_B48.dat  Delta_e_exc_M_{PS}       30 40 1
 LIBE_B48.dat  Delta_e_exc_mefft_M_{PS} 30 40 1 
 LIBE_B48.dat  dm0_cr                   30 40 1
 LIBE_B48.dat  dm0_cr_nabla             12 32 1
+LIBE_B48.dat  Delta_e_M_{Kp}           30  40 1
+LIBE_B48.dat  Delta_mu_u_M_{Kp}        30  40 1
+LIBE_B48.dat  Delta_mu_d_M_{Kp}        30  40 1
+LIBE_B48.dat  Delta_m0_u_M_{Kp}        30  40 1
+LIBE_B48.dat  Delta_m0_d_M_{Kp}        30  40 1
+LIBE_B48.dat  Delta_e_M_{K0}           30  40 1
+LIBE_B48.dat  Delta_mu_u_M_{K0}        30  40 1
+LIBE_B48.dat  Delta_mu_d_M_{K0}        30  40 1
+LIBE_B48.dat  Delta_m0_u_M_{K0}        30  40 1
+LIBE_B48.dat  Delta_m0_d_M_{K0}        30  40 1

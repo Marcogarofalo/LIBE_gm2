@@ -324,7 +324,7 @@ int main(int argc, char** argv) {
 
         j = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5V0"], i);
         symmetrise_jackboot(Njack, j, head.T, conf_jack, -1);
-        
+
     }
 
     // symmetrise_jackboot(Njack, 1, head.T, conf_jack, -1);
@@ -381,7 +381,7 @@ int main(int argc, char** argv) {
 
         fit_info.corr_id = id_pi;
         fit_info.myen = { 0 }; // real or imag
-        fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };
+        fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };// u , bar d
         add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
         id_de_pi = ncorr_new - 1;
         struct fit_type tmp_info;
@@ -532,7 +532,7 @@ int main(int argc, char** argv) {
 
         fit_info.corr_id = id_pi;
         fit_info.myen = { 0 }; // real or imag
-        fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };
+        fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };// u , bar d
         add_correlators(option, ncorr_new, conf_jack, deriv_e_exchange, fit_info);
         int id_de_pi_exc = ncorr_new - 1;
 
@@ -626,7 +626,7 @@ int main(int argc, char** argv) {
 
         fit_info.corr_id = id_pi;
         // fit_info.myen = { 1 }; // real or imag
-        fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };
+        fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };// u , bar d
         add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
         int id_de_VP = ncorr_new - 1;
 
@@ -697,6 +697,327 @@ int main(int argc, char** argv) {
         check_correlatro_counter(21);
 
     }
+
+
+    /////////////////////////////  K + //////////////////////////////////////////////////////////////
+    int id_de_Kp;
+
+    {   ////////////////////////////////////////////////////////////
+        //  derivative respect to e^2
+        ////////////////////////////////////////////////////////////
+        struct fit_type fit_info;
+        fit_info.N = 1;
+        fit_info.Njack = Njack;
+
+        fit_info.T = head.T;
+        // fit_info.myen = { TDs, TJW ,mu, nu };
+        fit_info.n_ext_P = 0;
+        // int id_pi_e = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["de"]);
+        // int id_pi_e0 = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
+        // int id_pi_me = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["-de"]);
+        // int id_pi_e = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["de"]);
+        // int id_pi_e0 = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
+        // int id_pi_me = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["-de"]);
+        std::vector<int> id_pi(head.oranges.size());
+        for (int i = 0; i < head.oranges.size(); i++) {
+            id_pi[i] = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], i);
+        }
+
+        fit_info.corr_id = id_pi;
+        fit_info.myen = { 0 }; // real or imag
+        fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] }; // u , bar s
+        add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
+        id_de_Kp = ncorr_new - 1;
+        struct fit_type tmp_info;
+        tmp_info.codeplateaux = true;
+        tmp_info.tmin = 2;
+        tmp_info.tmax = 2;
+        double* tmp = plateau_correlator_function(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, Njack,
+            namefile_plateaux, outfile, id_de_Kp, "Delta_e_C_{Kp}", identity, jack_file, tmp_info);
+        free(tmp);
+        check_correlatro_counter(22);
+        fit_info.restore_default();
+    }
+    {
+        struct fit_type fit_info;
+        struct fit_result fit_out;
+
+        fit_info.Nvar = 1;
+        fit_info.Npar = 1;
+        fit_info.N = 1;
+        fit_info.Njack = Njack;
+        fit_info.n_ext_P = 1;
+        fit_info.ext_P = (double**)malloc(sizeof(double*) * fit_info.n_ext_P);
+        fit_info.ext_P[0] = M_K;
+
+        fit_info.function = constant_fit;
+        fit_info.linear_fit = true;
+        fit_info.T = head.T;
+        fit_info.corr_id = { id_de_Kp , id_K };
+        fit_info.myen = { 1, 0 }; // sign , reim
+
+        struct fit_result fit_me_P5P5 = fit_fun_to_fun_of_corr(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+            outfile, lhs_M_correction, "Delta_e_M_{Kp}", fit_info,
+            jack_file);
+        check_correlatro_counter(23);
+        // free_fit_result(fit_info, fit_out);
+        fit_info.restore_default();
+        // fit_me_P5P5.clear();
+    }
+
+    {   ////////////////////////////////////////////////////////////
+        //  mass correction
+        ////////////////////////////////////////////////////////////
+        struct fit_type fit_info;
+
+
+        fit_info.Nvar = 1;
+        fit_info.Npar = 1;
+        fit_info.N = 1;
+        fit_info.Njack = Njack;
+        fit_info.n_ext_P = 1;
+        fit_info.ext_P = (double**)malloc(sizeof(double*) * fit_info.n_ext_P);
+        fit_info.ext_P[0] = M_K;
+
+        fit_info.function = constant_fit;
+        fit_info.linear_fit = true;
+        fit_info.T = head.T;
+
+        //////////////////////////////////////////  up
+        fit_info.myen = { +1, 1 }; // sign , reim
+        int id_dmu_u_pi = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 3);
+        fit_info.corr_id = { id_dmu_u_pi , id_K };
+
+        struct fit_result fit_dmu_u_P5P5 = fit_fun_to_fun_of_corr(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+            outfile, lhs_M_correction, "Delta_mu_u_M_{Kp}", fit_info,
+            jack_file);
+        check_correlatro_counter(24);
+
+        // fit_dmu_P5P5.clear();
+
+        //////////////////////////////////////////  down
+        fit_info.myen = { -1,  1 };
+        int id_dmu_d_pi = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 4);
+        fit_info.corr_id = { id_dmu_d_pi , id_K };
+
+        struct fit_result fit_dmu_d_P5P5 = fit_fun_to_fun_of_corr(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+            outfile, lhs_M_correction, "Delta_mu_d_M_{Kp}", fit_info,
+            jack_file);
+        check_correlatro_counter(25);
+        fit_info.restore_default();
+
+    }
+
+
+    {   ////////////////////////////////////////////////////////////
+        //  critical mass correction
+        ////////////////////////////////////////////////////////////
+        struct fit_type fit_info;
+
+
+        fit_info.Nvar = 1;
+        fit_info.Npar = 1;
+        fit_info.N = 1;
+        fit_info.Njack = Njack;
+        fit_info.n_ext_P = 1;
+        fit_info.ext_P = (double**)malloc(sizeof(double*) * fit_info.n_ext_P);
+        fit_info.ext_P[0] = M_K;
+
+        fit_info.function = constant_fit;
+        fit_info.linear_fit = true;
+        fit_info.T = head.T;
+
+        //////////////////////////////////////////  up
+        fit_info.myen = { -1, 0 };
+        int id_dmu_u_pi = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 1);
+        fit_info.corr_id = { id_dmu_u_pi , id_K };
+
+        struct fit_result fit_dmu_u_P5P5 = fit_fun_to_fun_of_corr(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+            outfile, lhs_M_correction, "Delta_m0_u_M_{Kp}", fit_info,
+            jack_file);
+        check_correlatro_counter(26);
+
+        // fit_dmu_P5P5.clear();
+
+        //////////////////////////////////////////  down
+        fit_info.myen = { -1, 0 };
+        int id_dmu_d_pi = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 2);
+        fit_info.corr_id = { id_dmu_d_pi , id_K };
+
+        struct fit_result fit_dmu_d_P5P5 = fit_fun_to_fun_of_corr(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+            outfile, lhs_M_correction, "Delta_m0_d_M_{Kp}", fit_info,
+            jack_file);
+        check_correlatro_counter(27);
+        fit_info.restore_default();
+
+    }
+
+    /////////////////////////////  K0 //////////////////////////////////////////////////////////////
+    int id_de_K0;
+
+    {   ////////////////////////////////////////////////////////////
+        //  derivative respect to e^2
+        ////////////////////////////////////////////////////////////
+        struct fit_type fit_info;
+        fit_info.N = 1;
+        fit_info.Njack = Njack;
+
+        fit_info.T = head.T;
+        // fit_info.myen = { TDs, TJW ,mu, nu };
+        fit_info.n_ext_P = 0;
+        // int id_pi_e = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["de"]);
+        // int id_pi_e0 = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
+        // int id_pi_me = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["-de"]);
+        // int id_pi_e = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["de"]);
+        // int id_pi_e0 = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["no"]);
+        // int id_pi_me = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], counterterm_map["-de"]);
+        std::vector<int> id_pi(head.oranges.size());
+        for (int i = 0; i < head.oranges.size(); i++) {
+            id_pi[i] = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], i);
+        }
+
+        fit_info.corr_id = id_pi;
+        fit_info.myen = { 0 }; // real or imag
+        fit_info.ave_P = { -0.3333333333333333, -0.3333333333333333 , head.oranges[2] };// d , bar s
+        add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
+        id_de_K0 = ncorr_new - 1;
+        struct fit_type tmp_info;
+        tmp_info.codeplateaux = true;
+        tmp_info.tmin = 2;
+        tmp_info.tmax = 2;
+        double* tmp = plateau_correlator_function(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, Njack,
+            namefile_plateaux, outfile, id_de_K0, "Delta_e_C_{K0}", identity, jack_file, tmp_info);
+        free(tmp);
+        check_correlatro_counter(28);
+        fit_info.restore_default();
+    }
+    {
+        struct fit_type fit_info;
+        struct fit_result fit_out;
+
+        fit_info.Nvar = 1;
+        fit_info.Npar = 1;
+        fit_info.N = 1;
+        fit_info.Njack = Njack;
+        fit_info.n_ext_P = 1;
+        fit_info.ext_P = (double**)malloc(sizeof(double*) * fit_info.n_ext_P);
+        fit_info.ext_P[0] = M_K;
+
+        fit_info.function = constant_fit;
+        fit_info.linear_fit = true;
+        fit_info.T = head.T;
+        fit_info.corr_id = { id_de_K0 , id_K };
+        fit_info.myen = { 1, 0 }; // sign , reim
+
+        struct fit_result fit_me_P5P5 = fit_fun_to_fun_of_corr(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+            outfile, lhs_M_correction, "Delta_e_M_{K0}", fit_info,
+            jack_file);
+        check_correlatro_counter(29);
+        // free_fit_result(fit_info, fit_out);
+        fit_info.restore_default();
+        // fit_me_P5P5.clear();
+    }
+
+    {   ////////////////////////////////////////////////////////////
+        //  mass correction
+        ////////////////////////////////////////////////////////////
+        struct fit_type fit_info;
+
+
+        fit_info.Nvar = 1;
+        fit_info.Npar = 1;
+        fit_info.N = 1;
+        fit_info.Njack = Njack;
+        fit_info.n_ext_P = 1;
+        fit_info.ext_P = (double**)malloc(sizeof(double*) * fit_info.n_ext_P);
+        fit_info.ext_P[0] = M_K;
+
+        fit_info.function = constant_fit;
+        fit_info.linear_fit = true;
+        fit_info.T = head.T;
+
+        //////////////////////////////////////////  up
+        fit_info.myen = { +1, 1 }; // sign , reim
+        int id_dmu_u_pi = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 3);
+        fit_info.corr_id = { id_dmu_u_pi , id_K };
+
+        struct fit_result fit_dmu_u_P5P5 = fit_fun_to_fun_of_corr(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+            outfile, lhs_M_correction, "Delta_mu_u_M_{K0}", fit_info,
+            jack_file);
+        check_correlatro_counter(30);
+
+        // fit_dmu_P5P5.clear();
+
+        //////////////////////////////////////////  down
+        fit_info.myen = { -1,  1 };
+        int id_dmu_d_pi = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 4);
+        fit_info.corr_id = { id_dmu_d_pi , id_K };
+
+        struct fit_result fit_dmu_d_P5P5 = fit_fun_to_fun_of_corr(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+            outfile, lhs_M_correction, "Delta_mu_d_M_{K0}", fit_info,
+            jack_file);
+        check_correlatro_counter(31);
+        fit_info.restore_default();
+
+    }
+
+
+    {   ////////////////////////////////////////////////////////////
+        //  critical mass correction
+        ////////////////////////////////////////////////////////////
+        struct fit_type fit_info;
+
+
+        fit_info.Nvar = 1;
+        fit_info.Npar = 1;
+        fit_info.N = 1;
+        fit_info.Njack = Njack;
+        fit_info.n_ext_P = 1;
+        fit_info.ext_P = (double**)malloc(sizeof(double*) * fit_info.n_ext_P);
+        fit_info.ext_P[0] = M_K;
+
+        fit_info.function = constant_fit;
+        fit_info.linear_fit = true;
+        fit_info.T = head.T;
+
+        //////////////////////////////////////////  up
+        fit_info.myen = { -1, 0 };
+        int id_dmu_u_pi = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 1);
+        fit_info.corr_id = { id_dmu_u_pi , id_K };
+
+        struct fit_result fit_dmu_u_P5P5 = fit_fun_to_fun_of_corr(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+            outfile, lhs_M_correction, "Delta_m0_u_M_{K0}", fit_info,
+            jack_file);
+        check_correlatro_counter(32);
+
+        // fit_dmu_P5P5.clear();
+
+        //////////////////////////////////////////  down
+        fit_info.myen = { -1, 0 };
+        int id_dmu_d_pi = id_twpt(head, head.mus.size() - 1, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 2);
+        fit_info.corr_id = { id_dmu_d_pi , id_K };
+
+        struct fit_result fit_dmu_d_P5P5 = fit_fun_to_fun_of_corr(
+            option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+            outfile, lhs_M_correction, "Delta_m0_d_M_{K0}", fit_info,
+            jack_file);
+        check_correlatro_counter(33);
+        fit_info.restore_default();
+
+    }
+
+
     // free stuff
     free(M_PS);
     free(M_K);
