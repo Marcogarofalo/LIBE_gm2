@@ -357,6 +357,10 @@ int main(int argc, char** argv) {
     //////////////////////////////  Pi + //////////////////////////////////////////////////////////////
     int ncorr_new = head.ncorr;
     int id_de_pi;
+    double* e_Mpi, * mu_Mpi, * m0_Mpi;
+    double* e_MKp, * muu_MKp, * mus_MKp, * m0u_MKp, * m0s_MKp;
+    double* e_MK0, * mud_MK0, * mus_MK0, * m0d_MK0, * m0s_MK0;
+    double* dm0;
 
     {   ////////////////////////////////////////////////////////////
         //  derivative respect to e^2
@@ -417,10 +421,11 @@ int main(int argc, char** argv) {
             option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
             outfile, lhs_M_correction, "Delta_e_M_{PS}", fit_info,
             jack_file);
+        e_Mpi = myres->create_copy(fit_me_P5P5.P[0]);
         check_correlatro_counter(5);
         // free_fit_result(fit_info, fit_out);
         fit_info.restore_default();
-        // fit_me_P5P5.clear();
+        fit_me_P5P5.clear();
     }
 
     {   ////////////////////////////////////////////////////////////
@@ -450,6 +455,8 @@ int main(int argc, char** argv) {
             option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
             outfile, lhs_M_correction, "Delta_mu_u_M_{PS}", fit_info,
             jack_file);
+        mu_Mpi = myres->create_copy(fit_dmu_u_P5P5.P[0]);
+        // myres->mult(mu_Mpi, mu_Mpi, 2);
         check_correlatro_counter(6);
 
         // fit_dmu_P5P5.clear();
@@ -496,9 +503,12 @@ int main(int argc, char** argv) {
             option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
             outfile, lhs_M_correction, "Delta_m0_u_M_{PS}", fit_info,
             jack_file);
+        m0_Mpi = myres->create_copy(fit_dmu_u_P5P5.P[0]);
+        myres->mult(m0_Mpi, m0_Mpi, 2);
+
         check_correlatro_counter(8);
 
-        // fit_dmu_P5P5.clear();
+        fit_dmu_u_P5P5.clear();
 
         //////////////////////////////////////////  down
         fit_info.myen = { -1, 0 };
@@ -511,9 +521,13 @@ int main(int argc, char** argv) {
             jack_file);
         check_correlatro_counter(9);
         fit_info.restore_default();
+        fit_dmu_d_P5P5.clear();
+
 
     }
-
+    //////////////////////////////////////////////////////////////
+    // exchange
+    //////////////////////////////////////////////////////////////
     {   ////////////////////////////////////////////////////////////
         //  derivative respect to e^2
         ////////////////////////////////////////////////////////////
@@ -695,7 +709,7 @@ int main(int argc, char** argv) {
             outfile, lhs_dm0_cr_nabla, "dm0_cr_nabla", fit_info,
             jack_file);
         check_correlatro_counter(21);
-
+        dm0 = myres->create_copy(dm0_cr.P[0]);
     }
 
 
@@ -762,9 +776,9 @@ int main(int argc, char** argv) {
             outfile, lhs_M_correction, "Delta_e_M_{Kp}", fit_info,
             jack_file);
         check_correlatro_counter(23);
-        // free_fit_result(fit_info, fit_out);
+        e_MKp = myres->create_copy(fit_me_P5P5.P[0]);
+        fit_me_P5P5.clear();
         fit_info.restore_default();
-        // fit_me_P5P5.clear();
     }
 
     {   ////////////////////////////////////////////////////////////
@@ -794,9 +808,9 @@ int main(int argc, char** argv) {
             option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
             outfile, lhs_M_correction, "Delta_mu_u_M_{Kp}", fit_info,
             jack_file);
+        muu_MKp = myres->create_copy(fit_dmu_u_P5P5.P[0]);
+        fit_dmu_u_P5P5.clear();
         check_correlatro_counter(24);
-
-        // fit_dmu_P5P5.clear();
 
         //////////////////////////////////////////  down
         fit_info.myen = { -1,  1 };
@@ -808,6 +822,8 @@ int main(int argc, char** argv) {
             outfile, lhs_M_correction, "Delta_mu_d_M_{Kp}", fit_info,
             jack_file);
         check_correlatro_counter(25);
+        mus_MKp = myres->create_copy(fit_dmu_d_P5P5.P[0]);
+        fit_dmu_d_P5P5.clear();
         fit_info.restore_default();
 
     }
@@ -841,7 +857,8 @@ int main(int argc, char** argv) {
             outfile, lhs_M_correction, "Delta_m0_u_M_{Kp}", fit_info,
             jack_file);
         check_correlatro_counter(26);
-
+        m0u_MKp = myres->create_copy(fit_dmu_u_P5P5.P[0]);
+        fit_dmu_u_P5P5.clear();
         // fit_dmu_P5P5.clear();
 
         //////////////////////////////////////////  down
@@ -854,6 +871,8 @@ int main(int argc, char** argv) {
             outfile, lhs_M_correction, "Delta_m0_d_M_{Kp}", fit_info,
             jack_file);
         check_correlatro_counter(27);
+        m0s_MKp = myres->create_copy(fit_dmu_d_P5P5.P[0]);
+        fit_dmu_d_P5P5.clear();
         fit_info.restore_default();
 
     }
@@ -921,9 +940,11 @@ int main(int argc, char** argv) {
             outfile, lhs_M_correction, "Delta_e_M_{K0}", fit_info,
             jack_file);
         check_correlatro_counter(29);
+        e_MK0 = myres->create_copy(fit_me_P5P5.P[0]);
+        fit_me_P5P5.clear();
+
         // free_fit_result(fit_info, fit_out);
         fit_info.restore_default();
-        // fit_me_P5P5.clear();
     }
 
     {   ////////////////////////////////////////////////////////////
@@ -953,6 +974,9 @@ int main(int argc, char** argv) {
             option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
             outfile, lhs_M_correction, "Delta_mu_u_M_{K0}", fit_info,
             jack_file);
+        mud_MK0 = myres->create_copy(fit_dmu_u_P5P5.P[0]);
+        fit_dmu_u_P5P5.clear();
+
         check_correlatro_counter(30);
 
         // fit_dmu_P5P5.clear();
@@ -967,6 +991,8 @@ int main(int argc, char** argv) {
             outfile, lhs_M_correction, "Delta_mu_d_M_{K0}", fit_info,
             jack_file);
         check_correlatro_counter(31);
+        mus_MK0 = myres->create_copy(fit_dmu_d_P5P5.P[0]);
+        fit_dmu_d_P5P5.clear();
         fit_info.restore_default();
 
     }
@@ -999,6 +1025,8 @@ int main(int argc, char** argv) {
             option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
             outfile, lhs_M_correction, "Delta_m0_u_M_{K0}", fit_info,
             jack_file);
+        m0d_MK0 = myres->create_copy(fit_dmu_u_P5P5.P[0]);
+        fit_dmu_u_P5P5.clear();
         check_correlatro_counter(32);
 
         // fit_dmu_P5P5.clear();
@@ -1012,12 +1040,93 @@ int main(int argc, char** argv) {
             option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
             outfile, lhs_M_correction, "Delta_m0_d_M_{K0}", fit_info,
             jack_file);
+        m0s_MK0 = myres->create_copy(fit_dmu_d_P5P5.P[0]);
+        fit_dmu_d_P5P5.clear();
         check_correlatro_counter(33);
         fit_info.restore_default();
 
     }
 
+    //////////////////////////////////////////////////////////////
+    // system
+    // M * d = Mphys-Miso
+    //////////////////////////////////////////////////////////////
 
+    // create the jackknife
+    double* Mpip_exp_jack = myres->create_fake(Mpip_exp, Mpip_exp_err, 1000);
+    double* MKp_exp_jack = myres->create_fake(MKp_exp, MKp_exp_err, 1001);
+    double* MK0_exp_jack = myres->create_fake(MK0_exp, MK0_exp_err, 1002);
+    double mean, err;
+    int seed;
+    line_read_param(option, "a", mean, err, seed, namefile_plateaux);
+    double* a_fm = myres->create_fake(mean, err, seed);
+    double* a_MeV = myres->create_copy(a_fm);
+    myres->div(a_MeV, a_fm, hbarc);
+    {
+        struct fit_type fit_info;
+        int N = 3;
+        fit_info.N = N;
+        fit_info.Njack = Njack;
+        double*** matrix = malloc_3<double>(Njack, N, N);
+        double** b = malloc_2<double>(Njack, N);
+        double** counter = malloc_2<double>(N, Njack);
+        double** counter_Mev = malloc_2<double>(N, Njack);
+        for (size_t j = 0; j < fit_info.Njack; j++) {
+            matrix[j][0][0] = mu_Mpi[j];
+            matrix[j][0][1] = mu_Mpi[j];
+            matrix[j][0][2] = 0;
+
+            matrix[j][1][0] = muu_MKp[j];
+            matrix[j][1][1] = 0;
+            matrix[j][1][2] = mus_MKp[j];
+
+            matrix[j][2][0] = 0;
+            matrix[j][2][1] = mud_MK0[j];
+            matrix[j][2][2] = mus_MK0[j];
+
+            b[j][0] = a_MeV[j] * Mpip_exp_jack[j] - M_PS[j] - e_em * e_em * e_Mpi[j] - 2 * dm0[j] * m0_Mpi[j];
+            b[j][1] = a_MeV[j] * MKp_exp_jack[j] - M_K[j] - e_em * e_em * e_MKp[j] - (dm0[j] * 2) * (4.0 / 5.0) * m0u_MKp[j] - (dm0[j] * 2) * (1.0 / 5.0) * m0s_MKp[j];
+            b[j][2] = a_MeV[j] * MK0_exp_jack[j] - M_K[j] - e_em * e_em * e_MK0[j] - (dm0[j] * 2) * (1.0 / 5.0) * m0d_MK0[j] - (dm0[j] * 2) * (1.0 / 5.0) * m0s_MK0[j];
+
+            double* res = LU_decomposition_solver(N, matrix[j], b[j]);
+            counter[0][j] = res[0];
+            counter[1][j] = res[1];
+            counter[2][j] = res[2];
+            free(res);
+            counter_Mev[0][j] = counter[0][j] / a_MeV[j];
+            counter_Mev[1][j] = counter[1][j] / a_MeV[j];
+            counter_Mev[2][j] = counter[2][j] / a_MeV[j];
+
+        }
+        printf("system:\n");
+        double* err = (double*)malloc(sizeof(double) * Njack);
+        for (int k = 0;k < N;k++) {
+            for (int i = 0;i < N;i++) {
+                for (size_t j = 0; j < fit_info.Njack; j++)
+                    err[j] = matrix[j][k][i];
+                printf("(%g  \\pm  %g )  ", matrix[Njack - 1][k][i], myres->comp_error(err));
+
+            }
+            printf("\n");
+        }
+        printf("*x=\n");
+        for (int i = 0;i < N;i++) {
+
+            for (size_t j = 0; j < fit_info.Njack; j++)
+                err[j] = b[j][i];
+            printf("(%g  \\pm  %g )  ", b[Njack - 1][i], myres->comp_error(err));
+        }
+        printf("\n");
+        free(err);
+
+        printf("a \\delta mu_u = %g  \\pm  %g \\\\\n", counter[0][Njack - 1], myres->comp_error(counter[0]));
+        printf("a \\delta mu_d = %g  \\pm %g  \\\\\n", counter[1][Njack - 1], myres->comp_error(counter[1]));
+        printf("a \\delta mu_s = %g  \\pm %g  \\\\\n", counter[2][Njack - 1], myres->comp_error(counter[2]));
+        printf("\\delta mu_u[Mev] = %g \\pm  %g  \\\\\n", counter_Mev[0][Njack - 1], myres->comp_error(counter_Mev[0]));
+        printf("\\delta mu_d[Mev] = %g \\pm  %g  \\\\\n", counter_Mev[1][Njack - 1], myres->comp_error(counter_Mev[1]));
+        printf("\\delta mu_s[Mev] = %g \\pm  %g  \\\\\n", counter_Mev[2][Njack - 1], myres->comp_error(counter_Mev[2]));
+
+    }
     // free stuff
     free(M_PS);
     free(M_K);

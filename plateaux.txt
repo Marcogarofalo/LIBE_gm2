@@ -1,3 +1,4 @@
+LIBE_B48.dat  a   0.07957 0.00013  3
 LIBE_B48.dat  M_{PS}        16 42 1
 LIBE_B48.dat  M_{K}         16  18 1
 LIBE_B48.dat  M_{K1}        16  18 1
