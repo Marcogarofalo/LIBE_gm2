@@ -1117,6 +1117,19 @@ int main(int argc, char** argv) {
             printf("(%g  \\pm  %g )  ", b[Njack - 1][i], myres->comp_error(err));
         }
         printf("\n");
+        printf("e corrections  e^2= %g\n",e_em*e_em);
+        printf("de_Mpi = (%g  \\pm  %g )  \n", e_Mpi[Njack - 1], myres->comp_error(e_Mpi));
+        printf("de_MKp = (%g  \\pm  %g )  \n", e_MKp[Njack - 1], myres->comp_error(e_MKp));
+        printf("de_MK0 = (%g  \\pm  %g )  \n", e_MK0[Njack - 1], myres->comp_error(e_MK0));
+        printf("m0 corrections\n");
+        printf("dm0_u = (%g  \\pm  %g )  \n", (dm0[Njack - 1] * 2) * (4.0 / 5.0), (myres->comp_error(dm0) * 2) * (4.0 / 5.0));
+        printf("dm0_d = (%g  \\pm  %g )  \n", (dm0[Njack - 1] * 2) * (1.0 / 5.0), (myres->comp_error(dm0) * 2) * (4.0 / 5.0));
+        printf("dm0u_Mpi = (%g  \\pm  %g )  \n", m0_Mpi[Njack - 1], myres->comp_error(m0_Mpi));
+        printf("dm0d_Mpi = (%g  \\pm  %g )  \n", m0_Mpi[Njack - 1], myres->comp_error(m0_Mpi));
+        printf("dm0u_MKp = (%g  \\pm  %g )  \n", m0u_MKp[Njack - 1], myres->comp_error(m0u_MKp));
+        printf("dm0s_MKp = (%g  \\pm  %g )  \n", m0s_MKp[Njack - 1], myres->comp_error(m0s_MKp));
+        printf("dm0d_MK0 = (%g  \\pm  %g )  \n", m0d_MK0[Njack - 1], myres->comp_error(m0d_MK0));
+        printf("dm0s_MK0 = (%g  \\pm  %g )  \n", m0s_MK0[Njack - 1], myres->comp_error(m0s_MK0));
         free(err);
 
         printf("a \\delta mu_u = %g  \\pm  %g \\\\\n", counter[0][Njack - 1], myres->comp_error(counter[0]));
