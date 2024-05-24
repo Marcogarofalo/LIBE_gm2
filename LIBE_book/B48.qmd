@@ -300,10 +300,10 @@ $$
  we get
 
 $$
-a \delta mu_u = -0.000345721  \pm  0.000153937 \\
-a \delta mu_d = 0.000559502  \pm 5.06083e-05  \\
-a \delta mu_s = -0.00161108  \pm 0.00015759  \\
-\delta mu_u[Mev] = -0.857359 \pm  0.381553  \\
-\delta mu_d[Mev] = 1.38752 \pm  0.126104  \\
-\delta mu_s[Mev] = -3.99533 \pm  0.387848  \\
+a \delta mu_u = -0.000458078  \pm  0.000125146 \\
+a \delta mu_d = 0.000484155  \pm 3.26229e-05  \\
+a \delta mu_s = -0.00149157  \pm 0.000117523  \\
+\delta mu_u[Mev] = -1.13599 \pm  0.310483  \\
+\delta mu_d[Mev] = 1.20066 \pm  0.08049  \\
+\delta mu_s[Mev] = -3.69897 \pm  0.286266  \\
 $$

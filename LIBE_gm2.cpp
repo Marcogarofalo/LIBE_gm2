@@ -1132,12 +1132,12 @@ int main(int argc, char** argv) {
         printf("dm0s_MK0 = (%g  \\pm  %g )  \n", m0s_MK0[Njack - 1], myres->comp_error(m0s_MK0));
         free(err);
 
-        printf("a \\delta mu_u = %g  \\pm  %g \\\\\n", counter[0][Njack - 1], myres->comp_error(counter[0]));
-        printf("a \\delta mu_d = %g  \\pm %g  \\\\\n", counter[1][Njack - 1], myres->comp_error(counter[1]));
-        printf("a \\delta mu_s = %g  \\pm %g  \\\\\n", counter[2][Njack - 1], myres->comp_error(counter[2]));
-        printf("\\delta mu_u[Mev] = %g \\pm  %g  \\\\\n", counter_Mev[0][Njack - 1], myres->comp_error(counter_Mev[0]));
-        printf("\\delta mu_d[Mev] = %g \\pm  %g  \\\\\n", counter_Mev[1][Njack - 1], myres->comp_error(counter_Mev[1]));
-        printf("\\delta mu_s[Mev] = %g \\pm  %g  \\\\\n", counter_Mev[2][Njack - 1], myres->comp_error(counter_Mev[2]));
+        printf("a \\delta \\mu_u = %g  \\pm  %g \\\\\n", counter[0][Njack - 1], myres->comp_error(counter[0]));
+        printf("a \\delta \\mu_d = %g  \\pm %g  \\\\\n", counter[1][Njack - 1], myres->comp_error(counter[1]));
+        printf("a \\delta \\mu_s = %g  \\pm %g  \\\\\n", counter[2][Njack - 1], myres->comp_error(counter[2]));
+        printf("\\delta \\mu_u[Mev] = %g \\pm  %g  \\\\\n", counter_Mev[0][Njack - 1], myres->comp_error(counter_Mev[0]));
+        printf("\\delta \\mu_d[Mev] = %g \\pm  %g  \\\\\n", counter_Mev[1][Njack - 1], myres->comp_error(counter_Mev[1]));
+        printf("\\delta \\mu_s[Mev] = %g \\pm  %g  \\\\\n", counter_Mev[2][Njack - 1], myres->comp_error(counter_Mev[2]));
 
     }
     // free stuff
