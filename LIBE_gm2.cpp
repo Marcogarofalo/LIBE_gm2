@@ -496,7 +496,7 @@ int main(int argc, char** argv) {
         fit_info.T = head.T;
 
         //////////////////////////////////////////  up
-        fit_info.myen = { -1, 0 };
+        fit_info.myen = { -1, 0 }; // sign , reim
         int id_dmu_u_pi = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 2);
         fit_info.corr_id = { id_dmu_u_pi , id_PS };
 
