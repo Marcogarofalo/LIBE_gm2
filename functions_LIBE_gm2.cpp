@@ -30,6 +30,37 @@ double lhs_M_correction(int j, double**** in, int t, struct fit_type fit_info) {
     return r;
 }
 
+double lhs_M_correction_fit(int j, double**** in, int t, struct fit_type fit_info) {
+    int id_DC = fit_info.corr_id[0];
+    int id_C = fit_info.corr_id[1];
+    int T = fit_info.T;
+    double M = fit_info.ext_P[0][j];
+    int  sign = fit_info.myen[0];
+    int  reim = fit_info.myen[1];
+    double r;
+
+    if (t < T/2) {
+        r = M_eff_T_ct_ctp1(t, T, in[j][id_C][(t)][0], in[j][id_C][(t + 1) % T][0]);
+    }
+    else  {
+        int tt = t % (T/2);
+        r = sign * (in[j][id_DC][tt][reim] / in[j][id_C][tt][0]);
+    }
+
+
+    return r;
+}
+
+double rhs_M_correction_fit(int n, int Nvar, double* x, int Npar, double* P) {
+    int t =x[0];
+    int T = x[1];
+    if (n == 0)
+        return P[0];
+    else {
+        return P[1] + P[2] * (T / 2 - (t)) * tanh(P[0] * (T / 2 - (t)));
+    }
+}
+
 
 double lhs_Mt_correction(int j, double**** in, int t, struct fit_type fit_info) {
     int id_DC = fit_info.corr_id[0];
@@ -187,7 +218,7 @@ double lhs_dm0_cr(int j, double**** in, int t, struct fit_type fit_info) {
     double e = fit_info.ave_P[0];
 
 
-    double r = e * e * in[j][id_e][t][reim_e] / (-in[j][id_m0u][t][reim_m0u] - in[j][id_m0d][t][reim_m0d]);
+    double r = -e * e * in[j][id_e][t][reim_e] / (-in[j][id_m0u][t][reim_m0u] - in[j][id_m0d][t][reim_m0d]);
 
     return r;
 }
@@ -205,7 +236,7 @@ double lhs_dm0_cr_nabla(int j, double**** in, int t, struct fit_type fit_info) {
     double num = in[j][id_e][(t + 1) % T][reim_e] - in[j][id_e][t][reim_e];
     double den = in[j][id_m0u][(t + 1) % T][reim_m0u] - in[j][id_m0u][t][reim_m0u];
     den += in[j][id_m0d][(t + 1) % T][reim_m0d] - in[j][id_m0d][t][reim_m0d];
-    double r = e * e * num / (-den);
+    double r = -e * e * num / (-den);
 
     return r;
 }

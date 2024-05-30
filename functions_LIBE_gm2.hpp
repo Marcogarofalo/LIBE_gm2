@@ -15,6 +15,10 @@ static constexpr double MK0_exp_err = 0.013;
 double lhs_function_LIBE_gm2_eg(int j, double**** in, int t, struct fit_type fit_info);
 
 double lhs_M_correction(int j, double**** in, int t, struct fit_type fit_info);
+double lhs_M_correction_fit(int j, double**** in, int t, struct fit_type fit_info);
+double rhs_M_correction_fit(int n, int Nvar, double* x, int Npar, double* P);
+
+
 double lhs_M_mefft_correction(int j, double**** in, int t, struct fit_type fit_info);
 
 double lhs_Mt_correction(int j, double**** in, int t, struct fit_type fit_info);

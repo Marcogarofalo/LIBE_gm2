@@ -212,7 +212,7 @@ C^{VP} =C^{VP}_0 + e^2 \delta_e C^{VP}+2(m_0^{ud}-m_0^{iso})\delta_{m0}C^{VP}\,.
 $$
 From the requirement $C^{VP}=0$  we compute 
 $$
-m_0^{ud}-m_0^{iso} =  e^2 \frac{\delta_e C^{VP}}{2\delta_{m0}C^{VP}}
+m_0^{ud}-m_0^{iso} = - e^2 \frac{\delta_e C^{VP}}{2\delta_{m0}C^{VP}}
 $$
 
 

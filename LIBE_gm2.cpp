@@ -510,7 +510,6 @@ int main(int argc, char** argv) {
         check_correlatro_counter(8);
 
         fit_dmu_u_P5P5.clear();
-
         //////////////////////////////////////////  down
         fit_info.myen = { -1, 0 };
         int id_dmu_d_pi = id_twpt(head, head.mus.size() - 1, same_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 1);
@@ -523,6 +522,31 @@ int main(int argc, char** argv) {
         check_correlatro_counter(9);
         fit_info.restore_default();
         fit_dmu_d_P5P5.clear();
+
+        // /////////////////////////////////////////////// combined fit
+        // fit_info.restore_default();
+        // fit_info.Njack = Njack;
+        // fit_info.N = 2;
+        // fit_info.Nvar = 1;
+        // fit_info.Npar = 3;
+
+        // fit_info.function = rhs_M_correction_fit;
+        // fit_info.linear_fit = false;
+        // fit_info.T = head.T;
+        // fit_info.n_ext_P = 1;
+        // fit_info.malloc_ext_P();
+        // for (int j = 0;j < Njack;j++)
+        //     fit_info.ext_P[0][j] = head.T;
+
+        // fit_info.myen = { -1, 0 }; // sign , reim
+        // fit_info.corr_id = { id_dmu_u_pi , id_PS };
+        // fit_dmu_u_P5P5 = fit_fun_to_fun_of_corr(
+        //     option, kinematic_2pt, (char*)"P5P5", conf_jack, namefile_plateaux,
+        //     outfile, lhs_M_correction_fit, "Delta_m0_u_M_{PS}", fit_info,
+        //     jack_file);
+
+        // exit(1);
+
 
 
     }
@@ -1118,7 +1142,7 @@ int main(int argc, char** argv) {
             printf("(%g  \\pm  %g )  ", b[Njack - 1][i], myres->comp_error(err));
         }
         printf("\n");
-        printf("e corrections  e^2= %g\n",e_em*e_em);
+        printf("e corrections  e^2= %g\n", e_em * e_em);
         printf("de_Mpi = (%g  \\pm  %g )  \n", e_Mpi[Njack - 1], myres->comp_error(e_Mpi));
         printf("de_MKp = (%g  \\pm  %g )  \n", e_MKp[Njack - 1], myres->comp_error(e_MKp));
         printf("de_MK0 = (%g  \\pm  %g )  \n", e_MK0[Njack - 1], myres->comp_error(e_MK0));
