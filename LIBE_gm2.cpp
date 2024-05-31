@@ -163,9 +163,10 @@ int main(int argc, char** argv) {
     }
 
     double**** data_bin = binning(confs, head.ncorr, head.T, data, bin);
+    free_corr(confs, head.ncorr, head.T, data);
+
     double**** conf_jack = myres->create(Neff, head.ncorr, head.T, data_bin);
     free_corr(Neff, head.ncorr, head.T, data_bin);
-    free_corr(confs, head.ncorr, head.T, data);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // print all the effective masses correlators

@@ -10,6 +10,7 @@ book:
     - intro.qmd
     - summary.qmd
     - B48.qmd
+    - autocorr_B48.qmd
     - references.qmd
 
 bibliography: references.bib
