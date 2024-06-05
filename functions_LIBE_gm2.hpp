@@ -34,4 +34,7 @@ double lhs_dm0_cr_nabla(int j, double**** in, int t, struct fit_type fit_info);
 
 struct fit_result  solve_QED_system(struct fit_type fit_info);
 
+double rhs_fit_dmu_phys(int n, int Nvar, double* x, int Npar, double* P);
+
+
 #endif

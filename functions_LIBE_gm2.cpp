@@ -39,11 +39,11 @@ double lhs_M_correction_fit(int j, double**** in, int t, struct fit_type fit_inf
     int  reim = fit_info.myen[1];
     double r;
 
-    if (t < T/2) {
+    if (t < T / 2) {
         r = M_eff_T_ct_ctp1(t, T, in[j][id_C][(t)][0], in[j][id_C][(t + 1) % T][0]);
     }
-    else  {
-        int tt = t % (T/2);
+    else {
+        int tt = t % (T / 2);
         r = sign * (in[j][id_DC][tt][reim] / in[j][id_C][tt][0]);
     }
 
@@ -52,7 +52,7 @@ double lhs_M_correction_fit(int j, double**** in, int t, struct fit_type fit_inf
 }
 
 double rhs_M_correction_fit(int n, int Nvar, double* x, int Npar, double* P) {
-    int t =x[0];
+    int t = x[0];
     int T = x[1];
     if (n == 0)
         return P[0];
@@ -239,4 +239,11 @@ double lhs_dm0_cr_nabla(int j, double**** in, int t, struct fit_type fit_info) {
     double r = -e * e * num / (-den);
 
     return r;
+}
+
+
+double rhs_fit_dmu_phys(int n, int Nvar, double* x, int Npar, double* P) {
+    double Mpi2 = x[0];
+    // double Mpi2_phys = x[1];
+    return P[0] + (Mpi2 ) * P[1];
 }
