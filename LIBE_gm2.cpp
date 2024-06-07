@@ -499,7 +499,7 @@ int main(int argc, char** argv) {
             fit_info.T = head.T;
 
             //////////////////////////////////////////  up
-            fit_info.myen = { -1, 1 }; // sign , reim
+            fit_info.myen = { 1, 1 }; // sign , reim
             /// mu1, mu2 (the one daggered), insertion 1 and 3 are on mu2, insertion 2 and 4 are on mu1
             int id_dmu_u_pi = id_twpt(head, imul, same_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 4);
             fit_info.corr_id = { id_dmu_u_pi , id_PS };
@@ -516,7 +516,7 @@ int main(int argc, char** argv) {
             // fit_dmu_P5P5.clear();
 
             //////////////////////////////////////////  down
-            fit_info.myen = { +1,  1 };
+            fit_info.myen = { -1,  1 };
             int id_dmu_d_pi = id_twpt(head, imul, same_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 3);
             fit_info.corr_id = { id_dmu_d_pi , id_PS };
             mysprintf(namefit, NAMESIZE, "Delta_mu_d_M_{PS}_%d", imul);
@@ -904,7 +904,7 @@ int main(int argc, char** argv) {
             fit_info.T = head.T;
 
             //////////////////////////////////////////  up
-            fit_info.myen = { -1, 1 }; // sign , reim
+            fit_info.myen = { +1, 1 }; // sign , reim
             int id_dmu_u_pi = id_twpt(head, imul, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 4);
             fit_info.corr_id = { id_dmu_u_pi , id_K };
             mysprintf(namefit, NAMESIZE, "Delta_mu_u_M_{Kp}_%d", imul);
@@ -918,7 +918,7 @@ int main(int argc, char** argv) {
             check_correlatro_counter(22 + (imul - 1) * Nlight);
 
             //////////////////////////////////////////  down
-            fit_info.myen = { +1,  1 };
+            fit_info.myen = { -1,  1 };
             int id_dmu_d_pi = id_twpt(head, imul, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 3);
             fit_info.corr_id = { id_dmu_d_pi , id_K };
             mysprintf(namefit, NAMESIZE, "Delta_mu_d_M_{Kp}_%d", imul);
@@ -1077,7 +1077,7 @@ int main(int argc, char** argv) {
             fit_info.T = head.T;
 
             //////////////////////////////////////////  up
-            fit_info.myen = { -1, 1 }; // sign , reim
+            fit_info.myen = { +1, 1 }; // sign , reim
             int id_dmu_u_pi = id_twpt(head, imul, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 4);
             fit_info.corr_id = { id_dmu_u_pi , id_K };
             mysprintf(namefit, NAMESIZE, "Delta_mu_u_M_{K0}_%d", imul);
@@ -1094,7 +1094,7 @@ int main(int argc, char** argv) {
             // fit_dmu_P5P5.clear();
 
             //////////////////////////////////////////  down
-            fit_info.myen = { +1,  1 };
+            fit_info.myen = { -1,  1 };
             int id_dmu_d_pi = id_twpt(head, imul, diff_mass, idTM, gamma_map["P5P5"], head.bananas[0] + 3);
             fit_info.corr_id = { id_dmu_d_pi , id_K };
             mysprintf(namefit, NAMESIZE, "Delta_mu_d_M_{K0}_%d", imul);
@@ -1233,13 +1233,17 @@ int main(int argc, char** argv) {
                 printf("(%g  \\pm  %g )  ", b[Njack - 1][i], myres->comp_error(err));
             }
             printf("\n");
+            printf("a Mpi^exp = (%g  )  \n", a_MeV[Njack-1] * Mpip_exp_jack[Njack-1]);
+            printf("a Mkp^exp = (%g  )  \n", a_MeV[Njack-1] * MKp_exp_jack[Njack-1]);
+            printf("Mpi = (%g  \\pm  %g )  \n", M_PS[Njack - 1], myres->comp_error(M_PS));
+            printf("MK = (%g  \\pm  %g )  \n", M_K[Njack - 1], myres->comp_error(M_K));
             printf("e corrections  e^2= %g\n", e_em * e_em);
             printf("de_Mpi = (%g  \\pm  %g )  \n", e_Mpi[Njack - 1], myres->comp_error(e_Mpi));
             printf("de_MKp = (%g  \\pm  %g )  \n", e_MKp[Njack - 1], myres->comp_error(e_MKp));
             printf("de_MK0 = (%g  \\pm  %g )  \n", e_MK0[Njack - 1], myres->comp_error(e_MK0));
             printf("m0 corrections\n");
             printf("dm0_u = (%g  \\pm  %g )  \n", (dm0[Njack - 1] * 2) * (4.0 / 5.0), (myres->comp_error(dm0) * 2) * (4.0 / 5.0));
-            printf("dm0_d = (%g  \\pm  %g )  \n", (dm0[Njack - 1] * 2) * (1.0 / 5.0), (myres->comp_error(dm0) * 2) * (4.0 / 5.0));
+            printf("dm0_d = (%g  \\pm  %g )  \n", (dm0[Njack - 1] * 2) * (1.0 / 5.0), (myres->comp_error(dm0) * 2) * (1.0 / 5.0));
             printf("dm0u_Mpi = (%g  \\pm  %g )  \n", m0_Mpi[Njack - 1], myres->comp_error(m0_Mpi));
             printf("dm0d_Mpi = (%g  \\pm  %g )  \n", m0_Mpi[Njack - 1], myres->comp_error(m0_Mpi));
             printf("dm0u_MKp = (%g  \\pm  %g )  \n", m0u_MKp[Njack - 1], myres->comp_error(m0u_MKp));
@@ -1302,7 +1306,7 @@ int main(int argc, char** argv) {
         // for (int e : fit_info.myen) {
         for (int e = 0; e < fit_info.myen.size(); e++) {
             for (int j = 0;j < fit_info.Njack;j++) {
-                fit_info.x[0][count][j] = pow(jackall_dmu.en[e].jack[0][j], 2)-pow(jackall_dmu.en[jackall_dmu.ens - 1].jack[0][j], 2); // M_PS- M_PS_iso_phys
+                fit_info.x[0][count][j] = pow(jackall_dmu.en[e].jack[0][j], 2) - pow(jackall_dmu.en[jackall_dmu.ens - 1].jack[0][j], 2); // M_PS- M_PS_iso_phys
             }
             count++;
         }
@@ -1314,13 +1318,33 @@ int main(int argc, char** argv) {
     // fit_info.compute_cov_fit(temp_argv, jackall_dmu, lhs_identity);
     // fit_info.compute_cov1_fit();
     fit_info.verbosity = 0;
-    mysprintf(namefit, NAMESIZE, "%s_fit_dmu_phys", option[6]);
+    mysprintf(namefit, NAMESIZE, "%s_fit_dmuu_phys", option[6]);
     fit_result fit_dmu = fit_all_data(temp_argv, jackall_dmu, lhs_identity, fit_info, namefit);
 
     fit_info.band_range = { 0,0.03 };
     print_fit_band(temp_argv, jackall_dmu, fit_info, fit_info, namefit, "Mpi2_m_Mpiiso2", fit_dmu, fit_dmu, 0, fit_info.myen.size() - 1, 0.01);
     write_jack(fit_dmu.P[0], Njack, jack_file);
     check_correlatro_counter(160);
+
+    /// down
+    fit_info.corr_id = { 3 };
+    mysprintf(namefit, NAMESIZE, "%s_fit_dmud_phys", option[6]);
+    fit_result fit_dmu_d = fit_all_data(temp_argv, jackall_dmu, lhs_identity, fit_info, namefit);
+
+    fit_info.band_range = { 0,0.03 };
+    print_fit_band(temp_argv, jackall_dmu, fit_info, fit_info, namefit, "Mpi2_m_Mpiiso2", fit_dmu_d, fit_dmu_d, 0, fit_info.myen.size() - 1, 0.01);
+    write_jack(fit_dmu_d.P[0], Njack, jack_file);
+    check_correlatro_counter(161);
+
+    /// s
+    fit_info.corr_id = { 4 };
+    mysprintf(namefit, NAMESIZE, "%s_fit_dmus_phys", option[6]);
+    fit_result fit_dmu_s = fit_all_data(temp_argv, jackall_dmu, lhs_identity, fit_info, namefit);
+
+    fit_info.band_range = { 0,0.03 };
+    print_fit_band(temp_argv, jackall_dmu, fit_info, fit_info, namefit, "Mpi2_m_Mpiiso2", fit_dmu_s, fit_dmu_s, 0, fit_info.myen.size() - 1, 0.01);
+    write_jack(fit_dmu_s.P[0], Njack, jack_file);
+    check_correlatro_counter(162);
     // free stuff
 
     free_2(head.mus.size() - 1, dmu_u);

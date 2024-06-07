@@ -236,7 +236,7 @@ double lhs_dm0_cr_nabla(int j, double**** in, int t, struct fit_type fit_info) {
     double num = in[j][id_e][(t + 1) % T][reim_e] - in[j][id_e][t][reim_e];
     double den = in[j][id_m0u][(t + 1) % T][reim_m0u] - in[j][id_m0u][t][reim_m0u];
     den += in[j][id_m0d][(t + 1) % T][reim_m0d] - in[j][id_m0d][t][reim_m0d];
-    double r = -e * e * num / (-den);
+    double r = - (e * e * num) / (-den);
 
     return r;
 }
