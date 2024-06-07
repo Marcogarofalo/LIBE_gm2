@@ -56,3 +56,42 @@ gg1<- gg1 + geom_point(aes(x=dfA$binning_size,y = dfA$dy ))
 fig1<- myplotly(gg1,"","binning size","error of M_{PS}",  to_print=TRUE )
 
 ```
+
+
+
+
+```{r, echo=FALSE, results='asis'}
+dfA<-NULL
+df<-NULL
+Nbs <- c(10,12,15,17,20,30,40,50,100)
+# Nbs <- c(10)
+
+for(Nb in Nbs){
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/autocorr/out/LIBE_B48_Nb",Nb,".dat_output")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-add_corr_to_df(string =paste0("M_{K}"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0+1/Nb, print_res = FALSE)
+fit<- get_full_res( "M_{K}",all_obs,mt)
+tmp <- data.frame("binning_size"=c(as.integer(496/Nb)),
+                  "y"=c(fit[1,1]),
+                  "dy"=c(fit[1,2]),
+                  "Nb"=c(Nb) )
+dfA<-rbind(dfA,tmp)
+}
+
+gg<- plot_df_corr_ggplot(df,width = 0.01)
+fig<- myplotly(gg,"","t","$M_{K}$",  to_print=TRUE )
+
+gg1<-myggplot()
+gg1<- gg1 + geom_pointrange(aes(x=dfA$binning_size,y = dfA$y,
+                                ymin = dfA$y -dfA$dy,
+                                ymax = dfA$y +dfA$dy))
+fig1<- myplotly(gg1,"","binning size","$M_{K}$",  to_print=TRUE )
+
+gg1<-myggplot()
+gg1<- gg1 + geom_point(aes(x=dfA$binning_size,y = dfA$dy ))
+fig1<- myplotly(gg1,"","binning size","error of M_{K}",  to_print=TRUE )
+
+```

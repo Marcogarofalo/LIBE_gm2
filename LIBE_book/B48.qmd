@@ -347,10 +347,15 @@ $$
 ## Fit from large $M_\pi$
 
 ```{r, echo=FALSE, results='asis', warning=FALSE}
-gg<-myggplot()
+gg<-myggplot(repeat_color=2)
 basename<-"/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_fit_dmu_phys"
 df<-read_fit_P_file(paste0(basename,"_fit_P.dat"))
 make_table_fit_result(df)
-gg<-plot_fit("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_fit_dmu_phys",var = "Mpi2_m_Mpiiso2",gg=gg, width = 0.0008)
-fig<-myplotly(gg,"","$(aM_\\pi)^2-(aM_\\pi^{iso})^2$","$a\\delta_\\mu$", to_print = TRUE)
+gg<-plot_fit("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_fit_dmuu_phys",var = "Mpi2_m_Mpiiso2",gg=gg, width = 0.0008,data_type = "up")
+gg<-plot_fit("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_fit_dmud_phys",var = "Mpi2_m_Mpiiso2",gg=gg, width = 0.0008,data_type = " down")
+gg<-plot_fit("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_fit_dmus_phys",var = "Mpi2_m_Mpiiso2",gg=gg, width = 0.0008,data_type = "  strange")
+
+
+
+fig<-myplotly(gg,"","$(aM_\\pi)^2-(aM_\\pi^{iso})^2$","$a\\delta$", to_print = TRUE)
 ```
