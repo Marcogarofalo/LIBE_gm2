@@ -150,6 +150,54 @@ double** deriv_e(int j, double**** in, int t, struct fit_type fit_info) {
     return r;
 }
 
+double** add_corr_sum_k_VKVK(int j, double**** in, int t, struct fit_type fit_info) {
+    double** r = malloc_2<double>(fit_info.N, 2);
+
+    for (int i = 0; i < fit_info.N;i++) {
+        for (int reim = 0;reim < 2;reim++) {
+
+            r[i][reim] = in[j][fit_info.corr_id[i * 3]][t][reim] + in[j][fit_info.corr_id[i * 3 + 1]][t][reim] + in[j][fit_info.corr_id[i * 3 + 2]][t][reim];
+            r[i][reim] /= -3.0;
+            // r[i][reim] = in[j][fit_info.corr_id[i * 3]][t][reim] ;
+        }
+    }
+    return r;
+}
+double** add_corr_correct_VKVK(int j, double**** in, int t, struct fit_type fit_info) {
+    double** r = malloc_2<double>(1, 2);
+    r[0][1] = 0;
+    int reim_e = fit_info.myen[0];
+    int sign_mu_u = fit_info.myen[1];
+    int sign_mu_d = fit_info.myen[2];
+    int reim_mu = fit_info.myen[3];
+    int sign_m_u = fit_info.myen[4];
+    int sign_m_d = fit_info.myen[5];
+    int reim_m = fit_info.myen[6];
+
+    double e_em = fit_info.ave_P[0];
+    double dmu_1 = fit_info.ext_P[0][j];
+    double dmu_2 = fit_info.ext_P[1][j];
+    double dm_1 = fit_info.ext_P[2][j];
+    double dm_2 = fit_info.ext_P[3][j];
+
+    int id_e = fit_info.corr_id[0];
+    int id_mu1 = fit_info.corr_id[1];
+    int id_mu2 = fit_info.corr_id[2];
+    int id_m1 = fit_info.corr_id[3];
+    int id_m2 = fit_info.corr_id[4];
+
+    r[0][0] = 0;
+    /// e
+    r[0][0] = e_em * e_em * in[j][id_e][t][reim_e];
+    /// mu
+    r[0][0] +=  sign_mu_u * dmu_1 * in[j][id_mu1][t][reim_mu];
+    r[0][0] +=  sign_mu_d * dmu_2 * in[j][id_mu2][t][reim_mu];
+    // // m
+    r[0][0] += sign_m_u * dm_1 * in[j][id_m1][t][reim_m];
+    r[0][0] += sign_m_d * dm_2 * in[j][id_m2][t][reim_m];
+    return r;
+}
+
 double** deriv_e_exchange(int j, double**** in, int t, struct fit_type fit_info) {
 
     double** r = malloc_2<double>(1, 2);
@@ -236,7 +284,7 @@ double lhs_dm0_cr_nabla(int j, double**** in, int t, struct fit_type fit_info) {
     double num = in[j][id_e][(t + 1) % T][reim_e] - in[j][id_e][t][reim_e];
     double den = in[j][id_m0u][(t + 1) % T][reim_m0u] - in[j][id_m0u][t][reim_m0u];
     den += in[j][id_m0d][(t + 1) % T][reim_m0d] - in[j][id_m0d][t][reim_m0d];
-    double r = - (e * e * num) / (-den);
+    double r = -(e * e * num) / (-den);
 
     return r;
 }
@@ -245,5 +293,5 @@ double lhs_dm0_cr_nabla(int j, double**** in, int t, struct fit_type fit_info) {
 double rhs_fit_dmu_phys(int n, int Nvar, double* x, int Npar, double* P) {
     double Mpi2 = x[0];
     // double Mpi2_phys = x[1];
-    return P[0] + (Mpi2 ) * P[1];
+    return P[0] + (Mpi2)*P[1];
 }
