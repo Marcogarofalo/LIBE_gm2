@@ -22,6 +22,8 @@
 #include "fit_all.hpp"
 
 #include "functions_LIBE_gm2.hpp"
+#include "functions_amu.hpp"
+
 struct kinematic kinematic_2pt;
 
 generic_header read_head(FILE* stream) {
@@ -115,6 +117,9 @@ int main(int argc, char** argv) {
 
     FILE* infile = open_file(namefile, "r");
 
+    char resampling[NAMESIZE];
+    mysprintf(resampling, NAMESIZE, argv[6]);
+    printf("resampling: %s\n", resampling);
     //////////////////////////////////// read and setup header
     generic_header head; //= read_head(infile);
     head.read_header_debug(infile);
@@ -369,7 +374,7 @@ int main(int argc, char** argv) {
     jackall_dmu.en = new data_single[jackall_dmu.ens];
     for (int i = 0;i < jackall_dmu.ens;i++) {
         jackall_dmu.en[i].header = head;
-        jackall_dmu.en[i].Nobs = 6;
+        jackall_dmu.en[i].Nobs = 9;
         jackall_dmu.en[i].Njack = head.Njack;
         jackall_dmu.en[i].jack = (double**)malloc(sizeof(double*) * jackall_dmu.en[i].Nobs);
         for (int k = 0;k < jackall_dmu.en[i].Nobs;k++) {
@@ -384,7 +389,7 @@ int main(int argc, char** argv) {
         double* e_MKp, * muu_MKp, * mus_MKp, * m0u_MKp, * m0s_MKp;
         double* e_MK0, * mud_MK0, * mus_MK0, * m0d_MK0, * m0s_MK0;
         double* dm0;
-        int Nlight = 32;
+        int Nlight = 36;
         ////// symmetrization
         int id_PS = id_twpt(head, imul, same_mass, idTM, gamma_map["P5P5"], counterterm_map["00"]);
         int id_K = id_twpt(head, imul, diff_mass, idTM, gamma_map["P5P5"], counterterm_map["00"]);
@@ -415,6 +420,42 @@ int main(int argc, char** argv) {
             option, kinematic_2pt, (char*)"P5P5", conf_jack, Njack,
             namefile_plateaux, outfile, id_K, namefit, M_eff_T, jack_file);
         check_correlatro_counter(1 + (imul - 1) * Nlight);
+
+        std::vector<int> id_VKVK_TM(head.oranges.size() * 2);
+        std::vector<int> id_VKVK_OS(head.oranges.size() * 2);
+        {   ////////////////////////////////////////////////////////////
+            //  add sum_k VKVK correlator
+            ////////////////////////////////////////////////////////////
+            struct fit_type fit_info;
+            fit_info.Njack = Njack;
+
+            fit_info.T = head.T;
+            fit_info.N = head.oranges.size() * 2;
+            fit_info.n_ext_P = 0;
+            std::vector<int> id_pi(head.oranges.size() * 2 * 3);
+            for (int i = 0; i < head.oranges.size(); i++) {
+                id_pi[i * 3 + 0] = id_twpt(head, imul, same_mass, idTM, gamma_map["V1V1"], i);
+                id_pi[i * 3 + 1] = id_twpt(head, imul, same_mass, idTM, gamma_map["V2V2"], i);
+                id_pi[i * 3 + 2] = id_twpt(head, imul, same_mass, idTM, gamma_map["V3V3"], i);
+                id_VKVK_TM[i] = ncorr_new + i;
+            }
+            for (int i = head.oranges.size(); i < head.oranges.size() * 2; i++) {
+                id_pi[i * 3 + 0] = id_twpt(head, imul, same_mass, idOS, gamma_map["V1V1"], i);
+                id_pi[i * 3 + 1] = id_twpt(head, imul, same_mass, idOS, gamma_map["V2V2"], i);
+                id_pi[i * 3 + 2] = id_twpt(head, imul, same_mass, idOS, gamma_map["V3V3"], i);
+                id_VKVK_OS[i] = ncorr_new + i;
+            }
+
+            fit_info.corr_id = id_pi;
+
+            add_correlators(option, ncorr_new, conf_jack, add_corr_sum_k_VKVK, fit_info);
+            for (int i = 0;i < fit_info.N / 2;i++) {
+                symmetrise_jackboot(Njack, id_VKVK_TM[i], head.T, conf_jack);
+                symmetrise_jackboot(Njack, id_VKVK_OS[i], head.T, conf_jack);
+            }
+
+            fit_info.restore_default();
+        }
 
 
         {   ////////////////////////////////////////////////////////////
@@ -1178,6 +1219,10 @@ int main(int argc, char** argv) {
         double* a_fm = myres->create_fake(mean, err, seed);
         double* a_MeV = myres->create_copy(a_fm);
         myres->div(a_MeV, a_fm, hbarc);
+
+        double* ones = (double*)malloc(sizeof(double) * Njack);
+        for (int j = 0;j < Njack;j++) ones[j] = 1.0;
+
         {
             struct fit_type fit_info;
             int N = 3;
@@ -1233,8 +1278,8 @@ int main(int argc, char** argv) {
                 printf("(%g  \\pm  %g )  ", b[Njack - 1][i], myres->comp_error(err));
             }
             printf("\n");
-            printf("a Mpi^exp = (%g  )  \n", a_MeV[Njack-1] * Mpip_exp_jack[Njack-1]);
-            printf("a Mkp^exp = (%g  )  \n", a_MeV[Njack-1] * MKp_exp_jack[Njack-1]);
+            printf("a Mpi^exp = (%g  )  \n", a_MeV[Njack - 1] * Mpip_exp_jack[Njack - 1]);
+            printf("a Mkp^exp = (%g  )  \n", a_MeV[Njack - 1] * MKp_exp_jack[Njack - 1]);
             printf("Mpi = (%g  \\pm  %g )  \n", M_PS[Njack - 1], myres->comp_error(M_PS));
             printf("MK = (%g  \\pm  %g )  \n", M_K[Njack - 1], myres->comp_error(M_K));
             printf("e corrections  e^2= %g\n", e_em * e_em);
@@ -1272,11 +1317,102 @@ int main(int argc, char** argv) {
 
             myres->copy(jackall_dmu.en[imul - 1].jack[5], a_fm);
 
+            myres->copy(jackall_dmu.en[imul - 1].jack[6], dm0);
+            myres->mult(jackall_dmu.en[imul - 1].jack[6], jackall_dmu.en[imul - 1].jack[6], 2 * (4.0 / 5.0));
+            myres->copy(jackall_dmu.en[imul - 1].jack[7], dm0);
+            myres->mult(jackall_dmu.en[imul - 1].jack[7], jackall_dmu.en[imul - 1].jack[7], 2 * (1.0 / 5.0));
+            myres->copy(jackall_dmu.en[imul - 1].jack[8], dm0);
+            myres->mult(jackall_dmu.en[imul - 1].jack[8], jackall_dmu.en[imul - 1].jack[8], 2 * (1.0 / 5.0));
+
+            write_jack(counter[0], Njack, jack_file);
+            check_correlatro_counter(32 + (imul - 1) * Nlight);
+            write_jack(counter[1], Njack, jack_file);
+            check_correlatro_counter(33 + (imul - 1) * Nlight);
+            write_jack(counter[2], Njack, jack_file);
+            check_correlatro_counter(34 + (imul - 1) * Nlight);
+
             free_2(N, counter);
             free_3(Njack, N, matrix);
             free_2(Njack, b);
-
         }
+        int id_e_VKVK;
+        {
+            ////////////////////////////////////////////////////////////
+            //  derivative respect to e^2
+            ////////////////////////////////////////////////////////////
+            struct fit_type fit_info;
+            fit_info.N = 1;
+            fit_info.Njack = Njack;
+
+            fit_info.T = head.T;
+
+            fit_info.n_ext_P = 0;
+
+            fit_info.corr_id = id_VKVK_TM;
+            fit_info.myen = { 0 }; // real or imag
+            fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };// u , bar d
+            add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
+            id_e_VKVK = ncorr_new - 1;
+            struct fit_type tmp_info;
+            tmp_info.codeplateaux = true;
+            tmp_info.tmin = 2;
+            tmp_info.tmax = 2;
+            fit_info.restore_default();
+        }
+        {
+            //////////////////////////////////////////////////////////////
+            // VKVK corrections
+            //////////////////////////////////////////////////////////////
+            struct fit_type fit_info;
+            fit_info.N = 1;
+            fit_info.Njack = Njack;
+
+            fit_info.T = head.T;
+
+            fit_info.n_ext_P = 4;
+            fit_info.ext_P = (double**)malloc(sizeof(double) * fit_info.n_ext_P);
+            fit_info.ext_P[0] = jackall_dmu.en[imul - 1].jack[2]; // dmu u
+            fit_info.ext_P[1] = jackall_dmu.en[imul - 1].jack[3]; // dmu d
+            fit_info.ext_P[2] = jackall_dmu.en[imul - 1].jack[6]; // dm u
+            fit_info.ext_P[3] = jackall_dmu.en[imul - 1].jack[7]; // dm d
+
+
+            fit_info.corr_id = { id_e_VKVK, id_VKVK_TM[head.bananas[0] + 4],  id_VKVK_TM[head.bananas[0] + 3],
+                id_VKVK_TM[head.bananas[0] + 2],  id_VKVK_TM[head.bananas[0] + 1] };
+
+
+            fit_info.myen = { 0,  // real/im em correction
+                            1 , -1 , 1, // dmu correction sign1 sign2 reim
+                            -1, -1, 0 }; // dm0 correction sign1 sign2 reim
+
+            fit_info.ave_P = { e_em };// u , bar d
+            add_correlators(option, ncorr_new, conf_jack, add_corr_correct_VKVK, fit_info);
+            int corr_VKVK = ncorr_new - 1;
+            mysprintf(namefit, NAMESIZE, "D_VKVK_(TM)_%d", imul);
+            struct fit_type tmp_info;
+            tmp_info.codeplateaux = true;
+            tmp_info.tmin = 2;
+            tmp_info.tmax = 2;
+            double* tmp_meff_corr = plateau_correlator_function(
+                option, kinematic_2pt, (char*)"P5P5", conf_jack, Njack,
+                namefile_plateaux, outfile, corr_VKVK, namefit, identity, dev_null,
+                tmp_info);
+            free(tmp_meff_corr);
+
+            constexpr double q2ud = 5.0 / 9.0;
+            double (*int_scheme)(int, int, double*);
+            int_scheme = integrate_simpson38;
+            int isub = -2;
+            mysprintf(namefit, NAMESIZE, "D_amu_(TM)_%d", imul);
+
+            double* amu_TM = compute_amu_full(conf_jack, corr_VKVK, Njack, ones, a_fm, q2ud, int_scheme, outfile, namefit, resampling, isub);
+            printf("%s: %g %g\n", namefit, amu_TM[Njack - 1], myres->comp_error(amu_TM));
+            write_jack(amu_TM, Njack, jack_file);
+        }
+
+
+
+
 
         free(e_Mpi); free(mu_Mpi);  free(m0_Mpi);
         free(e_MKp); free(muu_MKp); free(mus_MKp); free(m0u_MKp); free(m0s_MKp);
@@ -1324,7 +1460,7 @@ int main(int argc, char** argv) {
     fit_info.band_range = { 0,0.03 };
     print_fit_band(temp_argv, jackall_dmu, fit_info, fit_info, namefit, "Mpi2_m_Mpiiso2", fit_dmu, fit_dmu, 0, fit_info.myen.size() - 1, 0.01);
     write_jack(fit_dmu.P[0], Njack, jack_file);
-    check_correlatro_counter(160);
+    check_correlatro_counter(180);
 
     /// down
     fit_info.corr_id = { 3 };
@@ -1334,7 +1470,7 @@ int main(int argc, char** argv) {
     fit_info.band_range = { 0,0.03 };
     print_fit_band(temp_argv, jackall_dmu, fit_info, fit_info, namefit, "Mpi2_m_Mpiiso2", fit_dmu_d, fit_dmu_d, 0, fit_info.myen.size() - 1, 0.01);
     write_jack(fit_dmu_d.P[0], Njack, jack_file);
-    check_correlatro_counter(161);
+    check_correlatro_counter(181);
 
     /// s
     fit_info.corr_id = { 4 };
@@ -1344,7 +1480,7 @@ int main(int argc, char** argv) {
     fit_info.band_range = { 0,0.03 };
     print_fit_band(temp_argv, jackall_dmu, fit_info, fit_info, namefit, "Mpi2_m_Mpiiso2", fit_dmu_s, fit_dmu_s, 0, fit_info.myen.size() - 1, 0.01);
     write_jack(fit_dmu_s.P[0], Njack, jack_file);
-    check_correlatro_counter(162);
+    check_correlatro_counter(182);
     // free stuff
 
     free_2(head.mus.size() - 1, dmu_u);
