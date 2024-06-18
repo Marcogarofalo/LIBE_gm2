@@ -26,6 +26,8 @@ double rhs_fit_mass_correction(int n, int Nvar, double* x, int Npar, double* P);
 
 double** add_corr_sum_k_VKVK(int j, double**** in, int t, struct fit_type fit_info);
 double** add_corr_correct_VKVK(int j, double**** in, int t, struct fit_type fit_info);
+double** add_corr_sum_two(int j, double**** in, int t, struct fit_type fit_info);
+
 double** deriv_e(int j, double**** in, int t, struct fit_type fit_info);
 double** deriv_e_exchange(int j, double**** in, int t, struct fit_type fit_info);
 double** compute_TM_mass_insertion(int j, double**** in, int t, struct fit_type fit_info);

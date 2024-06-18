@@ -158,7 +158,8 @@ int main(int argc, char** argv) {
     head.write_header(jack_file);
 
     //////////////////////////////////// confs
-    double**** data = calloc_corr(confs, head.ncorr, head.T);
+    int Nmax_corr = head.ncorr + 100;
+    double**** data = calloc_corr(confs, Nmax_corr, head.T);
 
     printf("confs=%d\n", confs);
     printf("ncorr=%d\n", head.ncorr);
@@ -167,11 +168,11 @@ int main(int argc, char** argv) {
         read_twopt(infile, data[iconf], head);
     }
 
-    double**** data_bin = binning(confs, head.ncorr, head.T, data, bin);
-    free_corr(confs, head.ncorr, head.T, data);
+    double**** data_bin = binning(confs, Nmax_corr, head.T, data, bin);
+    free_corr(confs, Nmax_corr, head.T, data);
 
-    double**** conf_jack = myres->create(Neff, head.ncorr, head.T, data_bin);
-    free_corr(Neff, head.ncorr, head.T, data_bin);
+    double**** conf_jack = myres->create(Neff, Nmax_corr, head.T, data_bin);
+    free_corr(Neff, Nmax_corr, head.T, data_bin);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     // print all the effective masses correlators
@@ -448,7 +449,7 @@ int main(int argc, char** argv) {
 
             fit_info.corr_id = id_pi;
 
-            add_correlators(option, ncorr_new, conf_jack, add_corr_sum_k_VKVK, fit_info);
+            add_correlators_no_alloc(option, ncorr_new, conf_jack, add_corr_sum_k_VKVK, fit_info, Nmax_corr);
             for (int i = 0;i < fit_info.N / 2;i++) {
                 symmetrise_jackboot(Njack, id_VKVK_TM[i], head.T, conf_jack);
                 symmetrise_jackboot(Njack, id_VKVK_OS[i], head.T, conf_jack);
@@ -476,7 +477,7 @@ int main(int argc, char** argv) {
             fit_info.corr_id = id_pi;
             fit_info.myen = { 0 }; // real or imag
             fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };// u , bar d
-            add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
+            add_correlators_no_alloc(option, ncorr_new, conf_jack, deriv_e, fit_info, Nmax_corr);
             id_de_pi = ncorr_new - 1;
             struct fit_type tmp_info;
             tmp_info.codeplateaux = true;
@@ -669,7 +670,7 @@ int main(int argc, char** argv) {
             fit_info.corr_id = id_pi;
             fit_info.myen = { 0 }; // real or imag
             fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };// u , bar d
-            add_correlators(option, ncorr_new, conf_jack, deriv_e_exchange, fit_info);
+            add_correlators_no_alloc(option, ncorr_new, conf_jack, deriv_e_exchange, fit_info, Nmax_corr);
             int id_de_pi_exc = ncorr_new - 1;
 
             fit_info.restore_default();
@@ -771,7 +772,7 @@ int main(int argc, char** argv) {
             fit_info.corr_id = id_pi;
             // fit_info.myen = { 1 }; // real or imag
             fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };// u , bar d
-            add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
+            add_correlators_no_alloc(option, ncorr_new, conf_jack, deriv_e, fit_info, Nmax_corr);
             int id_de_VP = ncorr_new - 1;
             mysprintf(namefit, NAMESIZE, "Delta_e_VP_%d", imul);
 
@@ -882,7 +883,7 @@ int main(int argc, char** argv) {
             fit_info.corr_id = id_pi;
             fit_info.myen = { 0 }; // real or imag
             fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] }; // u , bar s
-            add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
+            add_correlators_no_alloc(option, ncorr_new, conf_jack, deriv_e, fit_info, Nmax_corr);
             id_de_Kp = ncorr_new - 1;
             struct fit_type tmp_info;
             tmp_info.codeplateaux = true;
@@ -1053,7 +1054,7 @@ int main(int argc, char** argv) {
             fit_info.corr_id = id_pi;
             fit_info.myen = { 0 }; // real or imag
             fit_info.ave_P = { -0.3333333333333333, -0.3333333333333333 , head.oranges[2] };// d , bar s
-            add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
+            add_correlators_no_alloc(option, ncorr_new, conf_jack, deriv_e, fit_info, Nmax_corr);
             id_de_K0 = ncorr_new - 1;
             struct fit_type tmp_info;
             tmp_info.codeplateaux = true;
@@ -1350,33 +1351,20 @@ int main(int argc, char** argv) {
 
             fit_info.corr_id = id_VKVK_TM;
             fit_info.myen = { 0 }; // real or imag
-            fit_info.ave_P = { 0.6666666666666666, -0.3333333333333333 , head.oranges[2] };// u , bar d
-            add_correlators(option, ncorr_new, conf_jack, deriv_e, fit_info);
+            fit_info.ave_P = { 1.0, 1.0 , head.oranges[2] };// u , bar d
+            add_correlators_no_alloc(option, ncorr_new, conf_jack, deriv_e, fit_info, Nmax_corr);
             id_e_VKVK = ncorr_new - 1;
-            struct fit_type tmp_info;
-            tmp_info.codeplateaux = true;
-            tmp_info.tmin = 2;
-            tmp_info.tmax = 2;
             fit_info.restore_default();
         }
         {
             //////////////////////////////////////////////////////////////
-            // VKVK corrections
+            // VKVK corrections 
             //////////////////////////////////////////////////////////////
             struct fit_type fit_info;
             fit_info.N = 1;
             fit_info.Njack = Njack;
 
             fit_info.T = head.T;
-
-            fit_info.n_ext_P = 4;
-            fit_info.ext_P = (double**)malloc(sizeof(double) * fit_info.n_ext_P);
-            fit_info.ext_P[0] = jackall_dmu.en[imul - 1].jack[2]; // dmu u
-            fit_info.ext_P[1] = jackall_dmu.en[imul - 1].jack[3]; // dmu d
-            fit_info.ext_P[2] = jackall_dmu.en[imul - 1].jack[6]; // dm u
-            fit_info.ext_P[3] = jackall_dmu.en[imul - 1].jack[7]; // dm d
-
-
             fit_info.corr_id = { id_e_VKVK, id_VKVK_TM[head.bananas[0] + 4],  id_VKVK_TM[head.bananas[0] + 3],
                 id_VKVK_TM[head.bananas[0] + 2],  id_VKVK_TM[head.bananas[0] + 1] };
 
@@ -1385,14 +1373,34 @@ int main(int argc, char** argv) {
                             1 , -1 , 1, // dmu correction sign1 sign2 reim
                             -1, -1, 0 }; // dm0 correction sign1 sign2 reim
 
-            fit_info.ave_P = { e_em };// u , bar d
-            add_correlators(option, ncorr_new, conf_jack, add_corr_correct_VKVK, fit_info);
+            fit_info.n_ext_P = 4;
+            fit_info.ext_P = (double**)malloc(sizeof(double) * fit_info.n_ext_P);
+
+            fit_info.ext_P[0] = jackall_dmu.en[imul - 1].jack[2]; // dmu u
+            fit_info.ext_P[1] = jackall_dmu.en[imul - 1].jack[2]; // dmu u
+            fit_info.ext_P[2] = jackall_dmu.en[imul - 1].jack[6]; // dm u
+            fit_info.ext_P[3] = jackall_dmu.en[imul - 1].jack[6]; // dm u
+            fit_info.ave_P = { e_em * 2.0 / 3.0 };// u , bar d
+            add_correlators_no_alloc(option, ncorr_new, conf_jack, add_corr_correct_VKVK, fit_info, Nmax_corr);
+            int corr_VKVK_uu = ncorr_new - 1;
+
+            fit_info.ext_P[0] = jackall_dmu.en[imul - 1].jack[3]; // dmu d
+            fit_info.ext_P[1] = jackall_dmu.en[imul - 1].jack[3]; // dmu d
+            fit_info.ext_P[2] = jackall_dmu.en[imul - 1].jack[7]; // dm d
+            fit_info.ext_P[3] = jackall_dmu.en[imul - 1].jack[7]; // dm d
+            fit_info.ave_P = { -e_em * 1.0 / 3.0 };// u , bar d
+            add_correlators_no_alloc(option, ncorr_new, conf_jack, add_corr_correct_VKVK, fit_info, Nmax_corr);
+            int corr_VKVK_dd = ncorr_new - 1;
+
+            fit_info.corr_id = { corr_VKVK_uu, corr_VKVK_dd };
+            add_correlators_no_alloc(option, ncorr_new, conf_jack, add_corr_sum_two, fit_info, Nmax_corr);
             int corr_VKVK = ncorr_new - 1;
+
             mysprintf(namefit, NAMESIZE, "D_VKVK_(TM)_%d", imul);
             struct fit_type tmp_info;
             tmp_info.codeplateaux = true;
-            tmp_info.tmin = 2;
-            tmp_info.tmax = 2;
+            tmp_info.tmin = 1;
+            tmp_info.tmax = 1;
             double* tmp_meff_corr = plateau_correlator_function(
                 option, kinematic_2pt, (char*)"P5P5", conf_jack, Njack,
                 namefile_plateaux, outfile, corr_VKVK, namefit, identity, dev_null,

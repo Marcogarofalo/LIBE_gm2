@@ -156,13 +156,20 @@ double** add_corr_sum_k_VKVK(int j, double**** in, int t, struct fit_type fit_in
     for (int i = 0; i < fit_info.N;i++) {
         for (int reim = 0;reim < 2;reim++) {
 
-            r[i][reim] = in[j][fit_info.corr_id[i * 3]][t][reim] + in[j][fit_info.corr_id[i * 3 + 1]][t][reim] + in[j][fit_info.corr_id[i * 3 + 2]][t][reim];
+            r[i][reim] = in[j][fit_info.corr_id[i * 3 + 0]][t][reim] + in[j][fit_info.corr_id[i * 3 + 1]][t][reim] + in[j][fit_info.corr_id[i * 3 + 2]][t][reim];
             r[i][reim] /= -3.0;
             // r[i][reim] = in[j][fit_info.corr_id[i * 3]][t][reim] ;
         }
     }
     return r;
 }
+double** add_corr_sum_two(int j, double**** in, int t, struct fit_type fit_info) {
+    double** r = malloc_2<double>(1, 2);
+    r[0][1] = 0;
+    r[0][0] = in[j][fit_info.corr_id[0]][t][0] + in[j][fit_info.corr_id[1]][t][0];
+    return r;
+}
+
 double** add_corr_correct_VKVK(int j, double**** in, int t, struct fit_type fit_info) {
     double** r = malloc_2<double>(1, 2);
     r[0][1] = 0;
@@ -187,9 +194,9 @@ double** add_corr_correct_VKVK(int j, double**** in, int t, struct fit_type fit_
     int id_m2 = fit_info.corr_id[4];
 
     r[0][0] = 0;
-    /// e
+    // e
     r[0][0] = e_em * e_em * in[j][id_e][t][reim_e];
-    /// mu
+    // mu
     r[0][0] +=  sign_mu_u * dmu_1 * in[j][id_mu1][t][reim_mu];
     r[0][0] +=  sign_mu_d * dmu_2 * in[j][id_mu2][t][reim_mu];
     // // m
