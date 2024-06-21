@@ -165,8 +165,10 @@ double** add_corr_sum_k_VKVK(int j, double**** in, int t, struct fit_type fit_in
 }
 double** add_corr_sum_two(int j, double**** in, int t, struct fit_type fit_info) {
     double** r = malloc_2<double>(1, 2);
+    double e_u = fit_info.ave_P[0];
+    double e_d = fit_info.ave_P[0];
     r[0][1] = 0;
-    r[0][0] = in[j][fit_info.corr_id[0]][t][0] + in[j][fit_info.corr_id[1]][t][0];
+    r[0][0] = e_u * e_u * in[j][fit_info.corr_id[0]][t][0] + e_d * e_d * in[j][fit_info.corr_id[1]][t][0];
     return r;
 }
 
@@ -197,9 +199,9 @@ double** add_corr_correct_VKVK(int j, double**** in, int t, struct fit_type fit_
     // e
     r[0][0] = e_em * e_em * in[j][id_e][t][reim_e];
     // mu
-    r[0][0] +=  sign_mu_u * dmu_1 * in[j][id_mu1][t][reim_mu];
-    r[0][0] +=  sign_mu_d * dmu_2 * in[j][id_mu2][t][reim_mu];
-    // // m
+    r[0][0] += sign_mu_u * dmu_1 * in[j][id_mu1][t][reim_mu];
+    r[0][0] += sign_mu_d * dmu_2 * in[j][id_mu2][t][reim_mu];
+    // m
     r[0][0] += sign_m_u * dm_1 * in[j][id_m1][t][reim_m];
     r[0][0] += sign_m_d * dm_2 * in[j][id_m2][t][reim_m];
     return r;

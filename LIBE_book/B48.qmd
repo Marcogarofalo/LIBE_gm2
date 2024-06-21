@@ -359,3 +359,82 @@ gg<-plot_fit("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_fit_dmus_ph
 
 fig<-myplotly(gg,"","$(aM_\\pi)^2-(aM_\\pi^{iso})^2$","$a\\delta$", to_print = TRUE)
 ```
+
+
+# Correction VKVK
+
+```{r, echo=FALSE, results='asis'}
+
+file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_output")
+mt<-read_df(file)
+all_obs<- get_all_corr(mt)
+df<-NULL
+
+
+df<-add_corr_to_df(string =paste0("D_amu_(TM)_1"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0, reshape = FALSE)
+df<-add_corr_to_df(string =paste0("D_amu_(TM)_2"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0, reshape = FALSE)
+df<-add_corr_to_df(string =paste0("D_amu_(TM)_3"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0, reshape = FALSE)
+df<-add_corr_to_df(string =paste0("D_amu_(TM)_4"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0, reshape = FALSE)
+df<-add_corr_to_df(string =paste0("D_amu_(TM)_5"),
+                    all_obs=all_obs,mt=mt,df = df,
+                    log=FALSE, number =NULL, nudge=0, reshape = FALSE)
+
+
+# fit<-get_full_res("dm0_cr_nabla", all_obs,mt)
+# cat( fit[1,1]/(4*pi/137.03599)*2/5*9, fit[1,2]/(4*pi/137.03599)*2/5*9)
+gg<- plot_df_corr_ggplot(df,width = 0.01)
+fig<- myplotly(gg,"","t","VKVK",  to_print=TRUE )
+
+
+```
+
+
+
+<!-- ```{r, echo=FALSE, results='asis'} -->
+
+<!-- file<-paste0("/home/garofalo/analysis/data_LIBE_gm2/out/LIBE_B48.dat_raw_correlators") -->
+<!-- mt<-read_df(file) -->
+<!-- all_obs<- get_all_corr(mt) -->
+<!-- df<-NULL -->
+
+
+<!-- df<-add_corr_to_df(rename =paste0("D_amu_(TM)_-e-e"), -->
+<!--                     all_obs=all_obs,mt=mt,df = df, -->
+<!--                     log=FALSE, number =2604*4+1, nudge=0, reshape = TRUE) -->
+<!-- df<-add_corr_to_df(rename =paste0("D_amu_(TM)_-e-e"), -->
+<!--                     all_obs=all_obs,mt=mt,df = df, -->
+<!--                     log=FALSE, number =2605*4+1, nudge=0, reshape = TRUE) -->
+
+
+<!-- df<-add_corr_to_df(rename =paste0("D_amu_(TM)_4"), -->
+<!--                     all_obs=all_obs,mt=mt,df = df, -->
+<!--                     log=FALSE, number =2617*4+1, nudge=0, reshape = TRUE) -->
+
+<!-- df<-add_corr_to_df(rename =paste0("D_amu_(TM)_3"), -->
+<!--                     all_obs=all_obs,mt=mt,df = df, -->
+<!--                     log=FALSE, number =2616*4+1, nudge=0, reshape = TRUE) -->
+<!-- df<-add_corr_to_df(rename =paste0("D_amu_(TM)_2"), -->
+<!--                     all_obs=all_obs,mt=mt,df = df, -->
+<!--                     log=FALSE, number =2615*4+1, nudge=0, reshape = TRUE) -->
+<!-- df<-add_corr_to_df(rename =paste0("D_amu_(TM)_1"), -->
+<!--                     all_obs=all_obs,mt=mt,df = df, -->
+<!--                     log=FALSE, number =2614*4+1, nudge=0, reshape = TRUE) -->
+<!-- df<-add_corr_to_df(rename =paste0("D_amu_(TM)_0"), -->
+<!--                     all_obs=all_obs,mt=mt,df = df, -->
+<!--                     log=FALSE, number =2613*4+1, nudge=0, reshape = TRUE) -->
+
+<!-- # fit<-get_full_res("dm0_cr_nabla", all_obs,mt) -->
+<!-- # cat( fit[1,1]/(4*pi/137.03599)*2/5*9, fit[1,2]/(4*pi/137.03599)*2/5*9) -->
+<!-- gg<- plot_df_corr_ggplot(df,width = 0.01) -->
+<!-- fig<- myplotly(gg,"","t","VKVK",  to_print=TRUE ) -->
+
+
+<!-- ``` -->
